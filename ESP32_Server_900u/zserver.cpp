@@ -5,6 +5,7 @@
 #include "zserverNotFound.h"
 #include "zserverUsb.h"
 #include "zserverConnTest.h"
+#include "zserverPsMock.h"
 #include "zfs.h"
 
 namespace zserver
@@ -16,6 +17,7 @@ namespace zserver
         zroutes::files();
         zroutes::usb();
         zroutes::connTest();
+        zroutes::psMock();
 
         // static server
         zserverApp.serveStatic("/", zfs, "/")
