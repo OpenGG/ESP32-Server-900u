@@ -1,5 +1,6 @@
 #include "ESPAsyncWebServer.h"
 #include "zserverApp.h"
+#include "zdebug.h"
 
 #if defined(CONFIG_IDF_TARGET_ESP32S2) || defined(CONFIG_IDF_TARGET_ESP32S3)
 #include "zusbCustom.h"
@@ -11,8 +12,11 @@
 
 static void handleUsbOn(AsyncWebServerRequest *request)
 {
+    zdebug("/admin/usb/on");
     String msg = zusbImpl::enable();
-    if (msg.length() == 0) {
+    zdebug("/admin/usb/on: " + msg);
+
+    if (msg.length() != 0) {
         request->send(503, Z_MIME_PLAIN_TEXT, msg);
         return;
     }
@@ -23,8 +27,11 @@ static void handleUsbOn(AsyncWebServerRequest *request)
 
 static void handleUsbOff(AsyncWebServerRequest *request)
 {
+    zdebug("/admin/usb/off");
     String msg = zusbImpl::disable();
-    if (msg.length() == 0) {
+    zdebug("/admin/usb/off: " + msg);
+
+    if (msg.length() != 0) {
         request->send(503, Z_MIME_PLAIN_TEXT, msg);
         return;
     }

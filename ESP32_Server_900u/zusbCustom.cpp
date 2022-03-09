@@ -56,15 +56,26 @@ namespace zusbCustom
 
     String enable()
     {
+        if (hasEnabled) {
+            return "Usb already enabled";
+        }
+
         maxSectorIndex = 0;
 
         file = zfs.open(USB_BIN_PATH, "r");
+
+        zdebug("zusbCustom::enable()");
+
         if (!file)
         {
+            zdebug("zusbCustom::enable(): file not found");
             return String("File not exists: ") + String(USB_BIN_PATH);
         }
 
         int size = file.size();
+
+        zdebug("zusbCustom::enable(): file size " + String(size));
+
         if (size == 0)
         {
             file.close();
@@ -72,6 +83,8 @@ namespace zusbCustom
         }
 
         maxSectorIndex = ceil(size / DISK_SECTOR_SIZE) - 1;
+
+        zdebug("zusbCustom::enable(): maxSectorIndex " + String(maxSectorIndex));
 
         dev.vendorID("PS4");
         dev.productID("ESP32 Server");
@@ -93,6 +106,12 @@ namespace zusbCustom
 
     String disable()
     {
+        if (!hasEnabled) {
+            return "Usb not enabled";
+        }
+
+        zdebug("zusbCustom::disable()");
+
         enTime = 0;
         hasEnabled = false;
         closeFile();
@@ -107,6 +126,8 @@ namespace zusbCustom
     {
         if (hasEnabled && millis() >= (enTime + MAX_USB_TTL))
         {
+            zdebug("zusbCustom::disable(): auto");
+
             zusbCustom::disable();
             closeFile();
         }
