@@ -1,6 +1,6 @@
 #pragma once
 
-namespace zusbCustom
+namespace zusbMsc
 {
     void setup();
     void loop();
