@@ -21,6 +21,10 @@ namespace zusb
 
     String enable()
     {
+        if (hasEnabled) {
+            return "Usb already enabled";
+        }
+
         digitalWrite(getPin(), HIGH);
         enTime = millis();
         hasEnabled = true;
@@ -30,6 +34,10 @@ namespace zusb
 
     String disable()
     {
+        if (!hasEnabled) {
+            return "Usb not enabled";
+        }
+
         enTime = 0;
         hasEnabled = false;
         digitalWrite(getPin(), LOW);
