@@ -3,6 +3,7 @@
 #include "zconfig.h"
 #include "zdebug.h"
 #include "zfs.h"
+#include "zdns.h"
 
 #define Z_SETUP_DELAY 1000
 
@@ -21,9 +22,11 @@ void setup()
 
   zconfig::setup();
 
-  zwifi::setup();
+  IPAddress ip = zwifi::setup();
 
   zserver::setup();
+
+  zdns::setup(ip);
 
   zdebug("setup() end");
 }
@@ -37,6 +40,8 @@ void loop()
   zconfig::loop();
 
   zserver::loop();
+
+  zdns::loop();
 
   // delay(1000);
 }

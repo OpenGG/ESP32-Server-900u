@@ -3,8 +3,8 @@
 #include "zdebug.h"
 
 #if defined(CONFIG_IDF_TARGET_ESP32S2) || defined(CONFIG_IDF_TARGET_ESP32S3)
-#include "zusbCustom.h"
-#define zusbImpl zusbCustom
+#include "zusbMsc.h"
+#define zusbImpl zusbMsc
 #else
 #include "zusb.h"
 #define zusbImpl zusb

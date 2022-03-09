@@ -7,12 +7,13 @@
 #include "zdebug.h"
 
 #define MAX_USB_TTL 15000
+#define DISK_SECTOR_COUNT 8192
 #define DISK_SECTOR_SIZE 512
 #define USB_BIN_PATH "/usb.bin"
 
 // static uint32_t DISK_SECTOR_SIZE = 512;
 
-static USBMSC dev;
+static USBMSC msc;
 
 static File file;
 
@@ -33,7 +34,8 @@ static int32_t onRead(uint32_t lba, uint32_t offset, void *buffer, uint32_t bufs
     uint32_t sectorSize = DISK_SECTOR_SIZE;
     uint32_t readSize = min(sectorSize, file.size() - seekIndex);
 
-    if (readSize != bufsize)
+    bool shouldClear = readSize != bufsize;
+    if (shouldClear)
     {
         memset(readBuff, 0, DISK_SECTOR_SIZE);
     }
@@ -42,13 +44,17 @@ static int32_t onRead(uint32_t lba, uint32_t offset, void *buffer, uint32_t bufs
     file.read(readBuff, readSize);
     memcpy(buffer, readBuff, bufsize);
 
+    zdebug("usb.bin onRead. seek: " + String(seekIndex));
+    zdebug("usb.bin onRead. read: " + String(readSize));
+    zdebug("usb.bin onRead. buffer: " + String(bufsize));
+
     return bufsize;
 }
 
 static long enTime = 0;
 static bool hasEnabled = false;
 
-namespace zusbCustom
+namespace zusbMsc
 {
     void setup()
     {
@@ -64,17 +70,17 @@ namespace zusbCustom
 
         file = zfs.open(USB_BIN_PATH, "r");
 
-        zdebug("zusbCustom::enable()");
+        zdebug("zusbMsc::enable()");
 
         if (!file)
         {
-            zdebug("zusbCustom::enable(): file not found");
+            zdebug("zusbMsc::enable(): file not found");
             return String("File not exists: ") + String(USB_BIN_PATH);
         }
 
         int size = file.size();
 
-        zdebug("zusbCustom::enable(): file size " + String(size));
+        zdebug("zusbMsc::enable(): file size " + String(size));
 
         if (size == 0)
         {
@@ -84,20 +90,31 @@ namespace zusbCustom
 
         maxSectorIndex = ceil(size / DISK_SECTOR_SIZE) - 1;
 
-        zdebug("zusbCustom::enable(): maxSectorIndex " + String(maxSectorIndex));
+        zdebug("zusbMsc::enable(): maxSectorIndex " + String(maxSectorIndex));
 
-        dev.vendorID("PS4");
-        dev.productID("ESP32 Server");
-        dev.productRevision("1.0");
-        dev.onRead(onRead);
-        dev.mediaPresent(true);
+        msc.vendorID("PS4");
+        msc.productID("ESP32 Server");
+        msc.productRevision("1.0");
+        msc.onRead(onRead);
+        msc.mediaPresent(true);
 
-        int sectorCount = zconfig::get("usb_sc", "8192").toInt();
 
-        zdebug("sectorCount: " + String(sectorCount));
+        bool success = msc.begin(DISK_SECTOR_COUNT, DISK_SECTOR_SIZE);
+        zdebug("DISK_SECTOR_COUNT: " + String(DISK_SECTOR_COUNT));
+        zdebug("DISK_SECTOR_SIZE: " + String(DISK_SECTOR_SIZE));
+        zdebug("usbmsc.begin(): " + String(success));
 
-        dev.begin(sectorCount, DISK_SECTOR_SIZE);
-        USB.begin();
+        // if (!success) {
+        //     return "Failed to call usbmsc.begin()";
+        // }
+
+        success = USB.begin();
+        zdebug("USB.begin(): " + String(success));
+
+        // if (!success) {
+        //     return "Failed to call USB.begin()";
+        // }
+
         enTime = millis();
         hasEnabled = true;
 
@@ -110,12 +127,12 @@ namespace zusbCustom
             return "Usb not enabled";
         }
 
-        zdebug("zusbCustom::disable()");
+        zdebug("zusbMsc::disable()");
 
         enTime = 0;
         hasEnabled = false;
         closeFile();
-        dev.end();
+        msc.end();
         // USB.end();
         ESP.restart();
 
@@ -126,9 +143,9 @@ namespace zusbCustom
     {
         if (hasEnabled && millis() >= (enTime + MAX_USB_TTL))
         {
-            zdebug("zusbCustom::disable(): auto");
+            zdebug("zusbMsc::disable(): auto");
 
-            zusbCustom::disable();
+            zusbMsc::disable();
             closeFile();
         }
     }
