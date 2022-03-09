@@ -22,11 +22,11 @@ const zUtils = {
             setTimeout(resolve, timeout);
         });
     },
-    get(url, responseType = 'text') {
+    ajax(method, url, responseType) {
         return new Promise((resolve, reject) => {
             const xhr = new XMLHttpRequest();
-            xhr.responseType = responseType;
-            xhr.open("GET", url, true);
+            xhr.responseType = responseType || 'text';
+            xhr.open(method || 'GET', url, true);
             xhr.send();
             xhr.onreadystatechange = () => {
                 if (xhr.readyState !== 4) {
@@ -40,14 +40,20 @@ const zUtils = {
             };
         });
     },
+    get(url, responseType) {
+        return zUtils.ajax('GET', url, responseType);
+    },
+    post(url, responseType) {
+        return zUtils.ajax('POST', url, responseType);
+    },
     getArrayBuffer(url) {
         return zUtils.get(url, 'arraybuffer');
     },
     enableUSB() {
-        return zUtils.get('/admin/usb/on');
+        return zUtils.post('/admin/usb/on');
     },
     disableUSB() {
-        return zUtils.get('/admin/usb/off');
+        return zUtils.post('/admin/usb/off');
     },
     showMessage(text, className) {
         const p = document.createElement('p');
