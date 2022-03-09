@@ -1,11 +1,13 @@
 import evaluate from './evaluate';
 import { loadScript } from './loadScripts';
-import { error } from './logger';
+import { error, log } from './logger';
 import { listen, setup } from './watchdog';
 
 const main = async () => {
   setup();
   listen(error);
+
+  log('Loading...');
 
   await loadScript('init.js');
 

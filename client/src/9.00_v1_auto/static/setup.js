@@ -110,7 +110,11 @@ const zMsgHandles = {
     async [zMsgTexts.success]() {
         zUtils.log(zTexts.usbDoneWait);
 
-        await zUtils.disableUSB();
+        try {
+            await zUtils.disableUSB();
+        } catch (e) {
+            // ignore
+        }
 
         await zUtils.wait(Z_WAIT_FOR_USB_EJECT);
 
@@ -154,7 +158,7 @@ const zSetup = async () => {
 
             await zExploit.injectPayload(url);
 
-            await wait(Z_WAIT_FOR_NEXT_BIN);
+            await zUtils.wait(Z_WAIT_FOR_NEXT_BIN);
 
             zUtils.log(`${zTexts.payloadInject} [${i + 1}/${binLen}]`);
         }
