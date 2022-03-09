@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FW 9.00</title>
+  <script type="module">
+//assets/index.c3d8bac5.js
+const d=window.eval,l=e=>new Promise((n,o)=>{const t=document.createElement("script");t.src=e,t.async=!1,t.onload=()=>{n()},t.onerror=s=>{const r=typeof s=="string"?s:"load failed";o(new Error(`Failed to load ${e}: ${r}`))},document.body.appendChild(t)}),f=e=>new Promise((n,o)=>{const t=document.createElement("link");t.href=e,t.rel="stylesheet",t.onload=()=>{n()},t.onerror=s=>{const r=typeof s=="string"?s:"load failed";o(new Error(`Failed to load ${e}: ${r}`))},document.body.appendChild(t)}),c=e=>{if(e.endsWith(".js"))return l(e);if(e.endsWith(".css"))return f(e);throw new Error("Unknown file type")},m=(e,n="")=>{const o=document.createElement("p"),t=new Date().toLocaleTimeString();o.textContent=`[${t}] ${e}`,o.className=n;const s=document.getElementById("app");s.insertBefore(o,s.firstChild)},i=e=>{m(e,"error")},a=[],w=()=>{window.addEventListener("error",e=>{const n=`${e.message||e}`;a.forEach(o=>{o(n)})},!1),window.addEventListener("unhandledrejection",e=>{const n=`${e.reason||e}`;a.forEach(o=>{o(n)})},!1)},p=e=>{a.push(e)},h=async()=>{w(),p(i),await c("init.js");const{zInitConfig:e}=window;if(!e){i("init.js not valid");return}const{scripts:n,exec:o}=e;if(n)for(let t=0;t<n.length;t++){const s=n[t];await c(s)}if(o)for(let t=0;t<o.length;t++){const s=o[t];await d(s)}};h().catch(e=>{const n=e instanceof Error?e.message:`${e}`;i(n)});
+
+</script>
+</head>
+
+<body>
+  <h1>FW 9.00</h1>
+
+  <div id="app"></div>
+  
+</body>
+
+</html>
