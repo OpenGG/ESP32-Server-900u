@@ -20,7 +20,7 @@ if you select a `No OTA` partition the firmware update via http will not be avai
 you can access the main page from the userguide or the consoles webbrowser using any hostname.<br>
 
 
-<br> 
+<br>
 
 ## ESP32 Boards
 
@@ -103,8 +103,8 @@ note that the esp32-s3 boards are not yet officially supported by the esp32 libr
 
 installation is simple you just use the arduino ide to flash the sketch/firmware to the esp32 board.<br>
 <br>
-next you connect to the wifi access point with a pc/laptop, <b>PS4_WEB_AP</b> is the default SSID and <b>password</b> is the default password.<br>
-then use a webbrowser and goto http://10.1.1.1/admin.html <b>10.1.1.1</b> is the defult webserver ip or http://ps4.local<br>
+next you connect to the wifi access point with a pc/laptop, <b>ESP_WEB_AP</b> is the default SSID and <b>123456789</b> is the default password.<br>
+then use a webbrowser and goto http://10.1.1.1/admin.html <b>10.1.1.1</b> is the defult webserver ip or http://esp.local<br>
 on the side menu of the admin page select <b>File Uploader</b> and then click <b>Select Files</b> and locate the <b>data</b> folder inside the <b>ESP32_Server_900u</b> folder in this repo and select all the files inside the <b>data</b> folder and click <b>Upload Files</b>
 you can then goto <b>Config Editor</b> and change the password for the wifi ap.
 
