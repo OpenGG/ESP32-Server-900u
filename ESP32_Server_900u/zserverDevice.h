@@ -1,6 +1,5 @@
 #pragma once
 
-namespace zroutes
-{
-    void device();
+namespace zroutes {
+void device();
 }

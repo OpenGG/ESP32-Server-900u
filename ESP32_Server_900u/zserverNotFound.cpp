@@ -1,8 +1,8 @@
 #include "ESPAsyncWebServer.h"
-#include "zserverApp.h"
 #include "zdebug.h"
+#include "zserverApp.h"
 
-static void handleNotFound(AsyncWebServerRequest *request)
+static void handleNotFound(AsyncWebServerRequest* request)
 {
     zdebug("404 request");
     zdebug("version: " + String(request->version()));
@@ -16,10 +16,9 @@ static void handleNotFound(AsyncWebServerRequest *request)
     request->send(404, Z_MIME_PLAIN_TEXT, "Not found");
 }
 
-namespace zroutes
+namespace zroutes {
+void notFound()
 {
-    void notFound()
-    {
-        zserverApp.onNotFound(handleNotFound);
-    }
+    zserverApp.onNotFound(handleNotFound);
+}
 }

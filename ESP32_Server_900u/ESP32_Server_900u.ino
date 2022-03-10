@@ -1,9 +1,9 @@
-#include "zwifi.h"
-#include "zserver.h"
 #include "zconfig.h"
 #include "zdebug.h"
-#include "zfs.h"
 #include "zdns.h"
+#include "zfs.h"
+#include "zserver.h"
+#include "zwifi.h"
 
 #define Z_SETUP_DELAY 1000
 
@@ -13,35 +13,35 @@
 
 void setup()
 {
-  delay(Z_SETUP_DELAY);
+    delay(Z_SETUP_DELAY);
 
-  zdebugBegin(115200);
-  zdebug("setup()");
+    zdebugBegin(115200);
+    zdebug("setup()");
 
-  zfs.begin(true);
+    zfs.begin(true);
 
-  zconfig::setup();
+    zconfig::setup();
 
-  IPAddress ip = zwifi::setup();
+    IPAddress ip = zwifi::setup();
 
-  zserver::setup();
+    zserver::setup();
 
-  zdns::setup(ip);
+    zdns::setup(ip);
 
-  zdebug("setup() end");
+    zdebug("setup() end");
 }
 
 // long counter = 0;
 
 void loop()
 {
-  // counter += 1;
-  // zdebug("loop(): " + String(counter));
-  zconfig::loop();
+    // counter += 1;
+    // zdebug("loop(): " + String(counter));
+    zconfig::loop();
 
-  zserver::loop();
+    zserver::loop();
 
-  zdns::loop();
+    zdns::loop();
 
-  // delay(1000);
+    // delay(1000);
 }

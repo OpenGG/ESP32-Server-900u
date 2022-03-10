@@ -7,8 +7,7 @@ static bool closed = true;
 
 static void ensure()
 {
-    if (!closed)
-    {
+    if (!closed) {
         return;
     }
 
@@ -19,8 +18,7 @@ static void ensure()
 
 static void cleanup()
 {
-    if (closed)
-    {
+    if (closed) {
         return;
     }
 
@@ -29,47 +27,46 @@ static void cleanup()
     prefs.end();
 }
 
-namespace zconfig
+namespace zconfig {
+void set(
+    const String& key,
+    const String& value)
 {
-    void set(
-        const String &key,
-        const String &value)
-    {
-        ensure();
+    ensure();
 
-        int len = key.length() + 1;
-        char k[len];
-        key.toCharArray(k, len);
+    int len = key.length() + 1;
+    char k[len];
+    key.toCharArray(k, len);
 
-        prefs.putString(k, value);
-    }
+    prefs.putString(k, value);
+}
 
-    String get(
-        const String &key,
-        const String &defaultValue)
-    {
-        ensure();
+String get(
+    const String& key,
+    const String& defaultValue)
+{
+    ensure();
 
-        int len = key.length() + 1;
-        char k[len];
-        key.toCharArray(k, len);
+    int len = key.length() + 1;
+    char k[len];
+    key.toCharArray(k, len);
 
-        return prefs.getString(k, defaultValue);
-    }
+    return prefs.getString(k, defaultValue);
+}
 
-    void clear()
-    {
-        ensure();
+void clear()
+{
+    ensure();
 
-        prefs.clear();
-    }
+    prefs.clear();
+}
 
-    void setup()
-    {
-    }
+void setup()
+{
+}
 
-    void loop()
-    {
-        cleanup();
-    }
+void loop()
+{
+    cleanup();
+}
 }

@@ -1,6 +1,5 @@
-namespace zserver
-{
-    void setup();
+namespace zserver {
+void setup();
 
-    void loop();
+void loop();
 }

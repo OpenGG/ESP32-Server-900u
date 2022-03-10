@@ -1,8 +1,7 @@
 #include <IPAddress.h>
 
-namespace zdns
-{
-    void setup(const IPAddress &Server_IP);
+namespace zdns {
+void setup(const IPAddress& Server_IP);
 
-    void loop();
+void loop();
 }

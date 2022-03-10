@@ -1,5 +1,5 @@
 #pragma once
 
 namespace zwifi {
-    IPAddress setup();
+IPAddress setup();
 }

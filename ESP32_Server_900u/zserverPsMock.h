@@ -1,4 +1,3 @@
-namespace zroutes
-{
-    void psMock();
+namespace zroutes {
+void psMock();
 }
