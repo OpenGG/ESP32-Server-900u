@@ -3,13 +3,13 @@
 #include "zfs.h"
 #include "zserverApp.h"
 
+static bool isFormating = false;
+
 static void handleFormat(AsyncWebServerRequest* request)
 {
-    zfs.end();
-    zfs.format();
-    zfs.begin(true);
+    isFormating = true;
 
-    request->send(200, Z_MIME_PLAIN_TEXT, Z_MSG_DONE);
+    request->send(200, Z_MIME_PLAIN_TEXT, "Formatting, wait for it to reboot.");
 }
 
 static void handleReset(AsyncWebServerRequest* request)
@@ -99,5 +99,19 @@ void device()
     zserverApp.on("/admin/device/reboot", HTTP_POST, handleReboot);
 
     zserverApp.on("/admin/device/info", HTTP_GET, handleInfo);
+}
+
+void deviceLoop()
+{
+    if (isFormating) {
+        isFormating = false;
+
+        zfs.end();
+        zfs.format();
+        zfs.begin(true);
+        delay(1000);
+
+        ESP.restart();
+    }
 }
 }
