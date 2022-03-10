@@ -150,6 +150,9 @@ const zSetup = async () => {
 
         zUtils.log(zTexts.exploitWait);
 
+        // wait for log render
+        await zUtils.wait(100);
+
         await poc();
 
         zUtils.log(`${zTexts.payloadInject} [0/${binLen}]`);
