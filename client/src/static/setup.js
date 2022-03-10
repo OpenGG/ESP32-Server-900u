@@ -6,8 +6,9 @@ let Z_WAIT_FOR_FAIL = 10 * 1000;
 let Z_BINS = 'goldhen_2.1.2_900.bin';
 
 const zTexts = {
-    exploitWait: '【整体进度  20%】加载完毕, 内核破解中, 请等待...',
-    usbWait: '【整体进度  50%】正在模拟 U 盘, 请等待...',
+    payloadWarm: '【整体进度  10%】加载完毕, 缓存预热中, 请等待...',
+    exploitWait: '【整体进度  20%】缓存预热完毕, 内核破解中, 请等待...',
+    usbWait: '【整体进度  50%】内核破解完毕，正在模拟 U 盘, 请等待...',
     usbDoneWait: '【整体进度  60%】正在模拟拔出 U 盘, 请等待...',
     usbDone: '【整体进度  70%】U 盘移除成功, 请等待...',
     payloadInject: '【整体进度  80%】正在注入代码, 请等待...',
@@ -134,15 +135,22 @@ const zMsg = (msg) => {
 
 const zSetup = async () => {
     try {
-        zUtils.log(zTexts.exploitWait);
-
-        await poc();
-
         const bins = Z_BINS.split(',')
             .map(a => a.trim())
             .filter(a => a);
-
         const binLen = bins.length;
+
+        zUtils.log(zTexts.payloadWarm);
+
+        for (let i = 0; i < binLen; i += 1) {
+            const url = bins[i];
+
+            await zUtils.getArrayBuffer(url);
+        }
+
+        zUtils.log(zTexts.exploitWait);
+
+        await poc();
 
         zUtils.log(`${zTexts.payloadInject} [0/${binLen}]`);
 

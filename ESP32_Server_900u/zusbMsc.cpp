@@ -52,6 +52,15 @@ static int32_t onRead(uint32_t lba, uint32_t offset, void* buffer, uint32_t bufs
 
 static long enTime = 0;
 static bool hasEnabled = false;
+static bool requestDisable = false;
+
+static void doDisable()
+{
+    closeFile();
+    msc.end();
+    // USB.end();
+    ESP.restart();
+}
 
 namespace zusbMsc {
 void setup()
@@ -122,25 +131,29 @@ String disable()
         return "Usb not enabled";
     }
 
-    zdebug("zusbMsc::disable()");
+    requestDisable = true;
 
-    enTime = 0;
-    hasEnabled = false;
-    closeFile();
-    msc.end();
-    // USB.end();
-    ESP.restart();
+    zdebug("zusbMsc::disable()");
 
     return "";
 }
 
 void loop()
 {
-    if (hasEnabled && millis() >= (enTime + MAX_USB_TTL)) {
-        zdebug("zusbMsc::disable(): auto");
+    if (hasEnabled) {
+        if (requestDisable) {
+            // manual disable
 
-        zusbMsc::disable();
-        closeFile();
+            hasEnabled = false;
+
+            doDisable();
+        } else if (millis() >= (enTime + MAX_USB_TTL)) {
+            // auto disable
+            hasEnabled = false;
+            zdebug("zusbMsc::disable(): auto");
+
+            doDisable();
+        }
     }
 }
 }

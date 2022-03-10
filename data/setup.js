@@ -134,15 +134,23 @@ const zMsg = (msg) => {
 
 const zSetup = async () => {
     try {
+        const bins = Z_BINS.split(',')
+            .map(a => a.trim())
+            .filter(a => a);
+        const binLen = bins.length;
+
+        zUtils.log(zTexts.exploitWait);
+
+        for (let i = 0; i < binLen; i += 1) {
+            const url = bins[i];
+
+            await zUtils.getArrayBuffer(url);
+        }
+
         zUtils.log(zTexts.exploitWait);
 
         await poc();
 
-        const bins = Z_BINS.split(',')
-            .map(a => a.trim())
-            .filter(a => a);
-
-        const binLen = bins.length;
 
         zUtils.log(`${zTexts.payloadInject} [0/${binLen}]`);
 
