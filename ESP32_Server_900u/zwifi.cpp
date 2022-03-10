@@ -61,14 +61,14 @@ IPAddress setup()
 {
     String wifi_connect = zconfig::get("wifi_connect", "0");
 
-    String wifi_ap_ssid = zconfig::get("wifi_ap_ssid", "PS4_WEB_AP");
-    String wifi_ap_pass = zconfig::get("wifi_ap_pass", "password");
+    String wifi_ap_ssid = zconfig::get("wifi_ap_ssid", "ESP_WEB_AP");
+    String wifi_ap_pass = zconfig::get("wifi_ap_pass", "123456789");
     String wifi_ap_ip = zconfig::get("wifi_ap_ip", "10.1.1.1");
     int wifi_ap_ch = zconfig::get("wifi_ap_ch", "11").toInt();
 
     String wifi_ssid = zconfig::get("wifi_ssid", "Home_WIFI");
     String wifi_pass = zconfig::get("wifi_pass", "password");
-    String wifi_hostname = zconfig::get("wifi_hostname", "ps4.local");
+    String wifi_hostname = zconfig::get("wifi_hostname", "esp.local");
 
     zdebug("wifi_connect: " + wifi_connect);
     zdebug("wifi_ap_ssid: " + wifi_ap_ssid);
