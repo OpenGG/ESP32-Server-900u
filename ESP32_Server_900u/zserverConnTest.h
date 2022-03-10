@@ -1,3 +1,3 @@
 namespace zroutes {
-    void connTest();
+void connTest();
 }

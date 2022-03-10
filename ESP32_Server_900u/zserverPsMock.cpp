@@ -1,6 +1,6 @@
 #include "ESPAsyncWebServer.h"
-#include "zserverApp.h"
 #include "zdebug.h"
+#include "zserverApp.h"
 
 #define Version "05.050.000"
 #define sVersion Version
@@ -15,14 +15,12 @@ static String split(String str, String from, String to)
     from.toLowerCase();
     to.toLowerCase();
     int pos1 = tmpstr.indexOf(from);
-    if (pos1 == -1)
-    {
+    if (pos1 == -1) {
         return "";
     }
 
     int pos2 = tmpstr.indexOf(to, pos1 + from.length());
-    if (pos2 == -1)
-    {
+    if (pos2 == -1) {
         return "";
     }
 
@@ -30,64 +28,52 @@ static String split(String str, String from, String to)
     return retval;
 }
 
-class OneParamRewrite : public AsyncWebRewrite
-{
+class OneParamRewrite : public AsyncWebRewrite {
 protected:
     String _urlPrefix;
     int _paramIndex;
     String _paramsBackup;
 
 public:
-    OneParamRewrite(const char *from, const char *to)
+    OneParamRewrite(const char* from, const char* to)
         : AsyncWebRewrite(from, to)
     {
 
         _paramIndex = _from.indexOf('{');
 
-        if (_paramIndex >= 0 && _from.endsWith("}"))
-        {
+        if (_paramIndex >= 0 && _from.endsWith("}")) {
             _urlPrefix = _from.substring(0, _paramIndex);
             int index = _params.indexOf('{');
-            if (index >= 0)
-            {
+            if (index >= 0) {
                 _params = _params.substring(0, index);
             }
-        }
-        else
-        {
+        } else {
             _urlPrefix = _from;
         }
         _paramsBackup = _params;
     }
 
-    bool match(AsyncWebServerRequest *request) override
+    bool match(AsyncWebServerRequest* request) override
     {
-        if (request->url().startsWith(_urlPrefix))
-        {
-            if (_paramIndex >= 0)
-            {
+        if (request->url().startsWith(_urlPrefix)) {
+            if (_paramIndex >= 0) {
                 _params = _paramsBackup + request->url().substring(_paramIndex);
-            }
-            else
-            {
+            } else {
                 _params = _paramsBackup;
             }
             return true;
-        }
-        else
-        {
+        } else {
             return false;
         }
     }
 };
 
-static void handleConsoleUpdate(AsyncWebServerRequest *request)
+static void handleConsoleUpdate(AsyncWebServerRequest* request)
 {
     String rgn = "cn";
 
-    if (request->hasParam("p"))
-    {
-        AsyncWebParameter *p = request->getParam("p");
+    if (request->hasParam("p")) {
+        AsyncWebParameter* p = request->getParam("p");
         String name = p->name();
 
         rgn = split(name, "list/", "/");
@@ -100,15 +86,13 @@ static void handleConsoleUpdate(AsyncWebServerRequest *request)
     request->send(200, "text/xml", xmlStr);
 }
 
-namespace zroutes
+namespace zroutes {
+void psMock()
 {
-    void psMock()
-    {
-        zserverApp.addRewrite(
-            new OneParamRewrite("/update/ps4/{p}", "/update/ps4?p={p}"));
+    zserverApp.addRewrite(
+        new OneParamRewrite("/update/ps4/{p}", "/update/ps4?p={p}"));
 
-        zserverApp.on(
-            "/update/ps4", HTTP_GET, [](AsyncWebServerRequest *request)
-            { handleConsoleUpdate(request); });
-    }
+    zserverApp.on(
+        "/update/ps4", HTTP_GET, handleConsoleUpdate);
+}
 }

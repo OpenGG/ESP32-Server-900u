@@ -1,7 +1,6 @@
 #pragma once
 
-namespace zroutes
-{
-    void usbLoop();
-    void usb();
+namespace zroutes {
+void usbLoop();
+void usb();
 }

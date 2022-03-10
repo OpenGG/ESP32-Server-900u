@@ -1,6 +1,6 @@
 #include "ESPAsyncWebServer.h"
-#include "zserverApp.h"
 #include "zdebug.h"
+#include "zserverApp.h"
 
 #if defined(CONFIG_IDF_TARGET_ESP32S2) || defined(CONFIG_IDF_TARGET_ESP32S3)
 #include "zusbMsc.h"
@@ -10,7 +10,7 @@
 #define zusbImpl zusb
 #endif
 
-static void handleUsbOn(AsyncWebServerRequest *request)
+static void handleUsbOn(AsyncWebServerRequest* request)
 {
     zdebug("/admin/usb/on");
     String msg = zusbImpl::enable();
@@ -24,8 +24,7 @@ static void handleUsbOn(AsyncWebServerRequest *request)
     request->send(200, Z_MIME_PLAIN_TEXT, Z_MSG_DONE);
 }
 
-
-static void handleUsbOff(AsyncWebServerRequest *request)
+static void handleUsbOff(AsyncWebServerRequest* request)
 {
     zdebug("/admin/usb/off");
     String msg = zusbImpl::disable();
@@ -39,20 +38,18 @@ static void handleUsbOff(AsyncWebServerRequest *request)
     request->send(200, Z_MIME_PLAIN_TEXT, Z_MSG_DONE);
 }
 
-namespace zroutes
+namespace zroutes {
+void usb()
 {
-    void usb()
-    {
-        zusbImpl::setup();
-        zserverApp.on(
-            "/admin/usb/on", HTTP_POST, [](AsyncWebServerRequest *request)
-            { handleUsbOn(request); });
-        zserverApp.on(
-            "/admin/usb/off", HTTP_POST, [](AsyncWebServerRequest *request)
-            { handleUsbOff(request); });
-    }
+    zusbImpl::setup();
+    zserverApp.on(
+        "/admin/usb/on", HTTP_POST, handleUsbOn);
+    zserverApp.on(
+        "/admin/usb/off", HTTP_POST, handleUsbOff);
+}
 
-    void usbLoop() {
-        zusbImpl::loop();
-    }
+void usbLoop()
+{
+    zusbImpl::loop();
+}
 }

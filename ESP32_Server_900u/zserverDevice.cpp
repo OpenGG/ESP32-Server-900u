@@ -1,9 +1,9 @@
 #include "ESPAsyncWebServer.h"
-#include "zfs.h"
 #include "zconfig.h"
+#include "zfs.h"
 #include "zserverApp.h"
 
-static void handleFormat(AsyncWebServerRequest *request)
+static void handleFormat(AsyncWebServerRequest* request)
 {
     zfs.end();
     zfs.format();
@@ -12,14 +12,14 @@ static void handleFormat(AsyncWebServerRequest *request)
     request->send(200, Z_MIME_PLAIN_TEXT, Z_MSG_DONE);
 }
 
-static void handleReset(AsyncWebServerRequest *request)
+static void handleReset(AsyncWebServerRequest* request)
 {
     zconfig::clear();
 
     request->send(200, Z_MIME_PLAIN_TEXT, Z_MSG_DONE);
 }
 
-static void handleReboot(AsyncWebServerRequest *request)
+static void handleReboot(AsyncWebServerRequest* request)
 {
     ESP.restart();
 
@@ -28,25 +28,18 @@ static void handleReboot(AsyncWebServerRequest *request)
 
 static String formatBytes(size_t bytes)
 {
-    if (bytes < 1024)
-    {
+    if (bytes < 1024) {
         return String(bytes) + " B";
-    }
-    else if (bytes < (1024 * 1024))
-    {
+    } else if (bytes < (1024 * 1024)) {
         return String(bytes / 1024.0) + " KB";
-    }
-    else if (bytes < (1024 * 1024 * 1024))
-    {
+    } else if (bytes < (1024 * 1024 * 1024)) {
         return String(bytes / 1024.0 / 1024.0) + " MB";
-    }
-    else
-    {
+    } else {
         return String(bytes / 1024.0 / 1024.0 / 1024.0) + " GB";
     }
 }
 
-static void handleInfo(AsyncWebServerRequest *request)
+static void handleInfo(AsyncWebServerRequest* request)
 {
     float flashFreq = (float)ESP.getFlashChipSpeed() / 1000.0 / 1000.0;
     FlashMode_t ideMode = ESP.getFlashChipMode();
@@ -68,17 +61,16 @@ static void handleInfo(AsyncWebServerRequest *request)
     output += "Estimated Flash size: " + formatBytes(ESP.getFlashChipSize()) + "<br>";
     output += "Flash frequency: " + String(flashFreq) + " MHz<br>";
     output += "Flash write mode: " + String((ideMode == FM_QIO ? "QIO" : ideMode == FM_QOUT ? "QOUT"
-                                                                     : ideMode == FM_DIO    ? "DIO"
-                                                                     : ideMode == FM_DOUT   ? "DOUT"
-                                                                                            : "UNKNOWN")) +
-              "<br><hr>";
+                      : ideMode == FM_DIO                                                   ? "DIO"
+                      : ideMode == FM_DOUT                                                  ? "DOUT"
+                                                                                            : "UNKNOWN"))
+        + "<br><hr>";
     output += "###### Storage information ######<br><br>";
     output += "Total Size: " + formatBytes(zfs.totalBytes()) + "<br>";
     output += "Used Space: " + formatBytes(zfs.usedBytes()) + "<br>";
     output += "Free Space: " + formatBytes(zfs.totalBytes() - zfs.usedBytes()) + "<br><hr>";
 #if defined(CONFIG_IDF_TARGET_ESP32S2) | defined(CONFIG_IDF_TARGET_ESP32S3)
-    if (ESP.getPsramSize() > 0)
-    {
+    if (ESP.getPsramSize() > 0) {
         output += "###### PSRam information ######<br><br>";
         output += "Psram Size: " + formatBytes(ESP.getPsramSize()) + "<br>";
         output += "Free psram: " + formatBytes(ESP.getFreePsram()) + "<br>";
@@ -97,20 +89,15 @@ static void handleInfo(AsyncWebServerRequest *request)
     request->send(200, "text/html", output);
 }
 
-namespace zroutes
+namespace zroutes {
+void device()
 {
-    void device()
-    {
-        zserverApp.on("/admin/device/format", HTTP_POST, [](AsyncWebServerRequest *request)
-                      { handleFormat(request); });
+    zserverApp.on("/admin/device/format", HTTP_POST, handleFormat);
 
-        zserverApp.on("/admin/device/reset", HTTP_POST, [](AsyncWebServerRequest *request)
-                      { handleReset(request); });
+    zserverApp.on("/admin/device/reset", HTTP_POST, handleReset);
 
-        zserverApp.on("/admin/device/reboot", HTTP_POST, [](AsyncWebServerRequest *request)
-                      { handleReboot(request); });
+    zserverApp.on("/admin/device/reboot", HTTP_POST, handleReboot);
 
-        zserverApp.on("/admin/device/info", HTTP_GET, [](AsyncWebServerRequest *request)
-                      { handleInfo(request); });
-    }
+    zserverApp.on("/admin/device/info", HTTP_GET, handleInfo);
+}
 }

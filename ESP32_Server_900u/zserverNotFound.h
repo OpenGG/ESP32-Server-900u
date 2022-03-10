@@ -1,6 +1,5 @@
 #pragma once
 
-namespace zroutes
-{
-    void notFound();
+namespace zroutes {
+void notFound();
 }

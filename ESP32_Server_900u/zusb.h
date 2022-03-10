@@ -1,9 +1,8 @@
 #pragma once
 
-namespace zusb
-{
-    void setup();
-    void loop();
-    String enable();
-    String disable();
+namespace zusb {
+void setup();
+void loop();
+String enable();
+String disable();
 }

@@ -2,16 +2,16 @@
 
 static DNSServer dnsServer;
 
-namespace zdns
+namespace zdns {
+void setup(const IPAddress& Server_IP)
 {
-    void setup(const IPAddress &Server_IP)
-    {
-        dnsServer.setTTL(30);
-        dnsServer.setErrorReplyCode(DNSReplyCode::ServerFailure);
-        dnsServer.start(53, "*", Server_IP);
-    }
+    dnsServer.setTTL(30);
+    dnsServer.setErrorReplyCode(DNSReplyCode::ServerFailure);
+    dnsServer.start(53, "*", Server_IP);
+}
 
-    void loop() {
-        dnsServer.processNextRequest();
-    }
+void loop()
+{
+    dnsServer.processNextRequest();
+}
 }

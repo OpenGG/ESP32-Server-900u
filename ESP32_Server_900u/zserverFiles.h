@@ -1,6 +1,5 @@
 #pragma once
 
-namespace zroutes
-{
-    void files();
+namespace zroutes {
+void files();
 }

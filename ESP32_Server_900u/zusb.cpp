@@ -1,5 +1,5 @@
-#include <Arduino.h>
 #include "zconfig.h"
+#include <Arduino.h>
 
 #define MAX_USB_TTL 15000
 
@@ -12,43 +12,41 @@ static int getPin()
 static long enTime = 0;
 static bool hasEnabled = false;
 
-namespace zusb
+namespace zusb {
+void setup()
 {
-    void setup()
-    {
-        pinMode(getPin(), OUTPUT);
+    pinMode(getPin(), OUTPUT);
+}
+
+String enable()
+{
+    if (hasEnabled) {
+        return "Usb already enabled";
     }
 
-    String enable()
-    {
-        if (hasEnabled) {
-            return "Usb already enabled";
-        }
+    digitalWrite(getPin(), HIGH);
+    enTime = millis();
+    hasEnabled = true;
 
-        digitalWrite(getPin(), HIGH);
-        enTime = millis();
-        hasEnabled = true;
+    return "";
+}
 
-        return "";
+String disable()
+{
+    if (!hasEnabled) {
+        return "Usb not enabled";
     }
 
-    String disable()
-    {
-        if (!hasEnabled) {
-            return "Usb not enabled";
-        }
+    enTime = 0;
+    hasEnabled = false;
+    digitalWrite(getPin(), LOW);
+    return "";
+}
 
-        enTime = 0;
-        hasEnabled = false;
-        digitalWrite(getPin(), LOW);
-        return "";
+void loop()
+{
+    if (hasEnabled && millis() >= (enTime + MAX_USB_TTL)) {
+        zusb::disable();
     }
-
-    void loop()
-    {
-        if (hasEnabled && millis() >= (enTime + MAX_USB_TTL))
-        {
-            zusb::disable();
-        }
-    }
+}
 }
