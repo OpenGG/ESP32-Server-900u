@@ -2,15 +2,19 @@ import evaluate from './evaluate';
 import loadScripts, { loadScript } from './loadScripts';
 import zLog from './zLog';
 import { listen as listenWatchdog, setup as setupWatchdog } from './watchdog';
+import { ready } from './appCache';
 
 const main = async () => {
   window.zLog = zLog;
-
   setupWatchdog();
-
   listenWatchdog(zLog.error);
 
   zLog.log('Loading...');
+  await ready((progress) => {
+    const p = Math.round(progress * 100)
+    zLog.log(`Loading... ${p}%`);
+  });
+
 
   await loadScript('init.js');
 

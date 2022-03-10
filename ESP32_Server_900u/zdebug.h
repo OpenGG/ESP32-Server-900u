@@ -1,6 +1,6 @@
 #pragma once
 
-// #define Z_DEBUG_ENABLE 1
+#define Z_DEBUG_ENABLE 1
 
 #ifdef Z_DEBUG_ENABLE
 #define zdebugBegin(p) Serial.begin(p);
