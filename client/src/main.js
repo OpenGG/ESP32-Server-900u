@@ -10,10 +10,10 @@ const main = async () => {
   listenWatchdog(zLog.error);
 
   zLog.log('Loading...');
-  await ready((progress) => {
-    const p = Math.round(progress * 100)
-    zLog.log(`Loading... ${p}%`);
-  });
+  // await ready((progress) => {
+  //   const p = Math.round(progress * 100)
+  //   zLog.log(`Loading... ${p}%`);
+  // });
 
 
   await loadScript('init.js');

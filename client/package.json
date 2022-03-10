@@ -18,7 +18,7 @@
     "dev": "vite",
     "release": "RELEASE=1 bash release.sh",
     "build": "npm run build:app",
-    "build:app": "vite build && rm -rf dist/assets && node appcache.mjs",
+    "build:app": "vite build && rm -rf dist/assets",
     "serve": "cd dist && yarn dlx http-server -c-1 -g -p80",
     "preview": "vite preview"
   },
