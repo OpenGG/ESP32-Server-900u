@@ -1,17 +1,33 @@
 #!/usr/bin/env bash
 
+set -e
+
+# config
+GZ_BAR="+10k"
+GZ_EXCLUDE="usb.bin kexploit.js"
+
+
+# exclude
+EXCLUDE=""
+for f in $GZ_EXCLUDE
+do
+  EXCLUDE="$EXCLUDE -not -name $f"
+done
+
+# build
+
 cd client
 pnpm i
 pnpm run build
 
-cd dist/*
-
-find . -size +2k -not -name usb.bin -exec gzip -n {} \+
-
-cd -
-
 cd ..
 
+# copy to data/
 rm -f data/*
 
-cp -r client/dist/*/* ./data/
+cp -r client/dist/* ./data/
+
+# gz
+cd data
+
+find . -size "$GZ_BAR" $EXCLUDE -exec gzip -n {} \+
