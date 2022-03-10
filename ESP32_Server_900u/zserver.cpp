@@ -32,5 +32,6 @@ void setup()
 void loop()
 {
     zroutes::usbLoop();
+    zroutes::deviceLoop();
 }
 }
