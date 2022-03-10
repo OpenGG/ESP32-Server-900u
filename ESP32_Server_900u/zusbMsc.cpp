@@ -62,7 +62,8 @@ namespace zusbMsc
 
     String enable()
     {
-        if (hasEnabled) {
+        if (hasEnabled)
+        {
             return "Usb already enabled";
         }
 
@@ -88,16 +89,15 @@ namespace zusbMsc
             return String("Empty file: ") + String(USB_BIN_PATH);
         }
 
-        maxSectorIndex = ceil(size / DISK_SECTOR_SIZE) - 1;
+        maxSectorIndex = ceil((float)size / (float)DISK_SECTOR_SIZE) - 1;
 
         zdebug("zusbMsc::enable(): maxSectorIndex " + String(maxSectorIndex));
 
-        msc.vendorID("PS4");
+        msc.vendorID("ESP32");
         msc.productID("ESP32 Server");
         msc.productRevision("1.0");
         msc.onRead(onRead);
         msc.mediaPresent(true);
-
 
         bool success = msc.begin(DISK_SECTOR_COUNT, DISK_SECTOR_SIZE);
         zdebug("DISK_SECTOR_COUNT: " + String(DISK_SECTOR_COUNT));
@@ -123,7 +123,8 @@ namespace zusbMsc
 
     String disable()
     {
-        if (!hasEnabled) {
+        if (!hasEnabled)
+        {
             return "Usb not enabled";
         }
 
