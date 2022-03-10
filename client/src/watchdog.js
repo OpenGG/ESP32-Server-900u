@@ -1,6 +1,4 @@
-type IListener = (msg: string) => void;
-
-const listeners: IListener[] = [];
+const listeners = [];
 
 export const setup = () => {
     window.addEventListener('error', (e) => {
@@ -18,6 +16,6 @@ export const setup = () => {
     }, false);
 }
 
-export const listen = (fn: IListener) => {
+export const listen = (fn) => {
     listeners.push(fn);
 }

@@ -17,15 +17,12 @@
   "scripts": {
     "dev": "vite",
     "release": "RELEASE=1 bash release.sh",
-    "build": "version=9.00_v1_auto npm run build:app",
-    "build:app": "tsc && vite build && rm -rf docs/*/assets dist/*/assets",
+    "build": "npm run build:app",
+    "build:app": "vite build && rm -rf dist/assets",
     "serve": "cd dist && yarn dlx http-server -c-1 -g -p80",
     "preview": "vite preview"
   },
   "devDependencies": {
-    "fs-extra": "^10.0.1",
-    "globby": "^13.1.1",
-    "typescript": "^4.6.2",
     "vite": "^2.8.6",
     "vite-plugin-singlefile": "^0.7.1",
     "vite-plugin-static-copy": "^0.3.1"

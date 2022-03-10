@@ -55,19 +55,11 @@ const zUtils = {
     disableUSB() {
         return zUtils.post('/admin/usb/off');
     },
-    showMessage(text, className) {
-        const p = document.createElement('p');
-        const t = new Date().toLocaleTimeString();
-        p.textContent = `[${t}] ${text}`;
-        p.className = className;
-        const app = document.getElementById('app');
-        app.insertBefore(p, app.firstChild);
-    },
     error(text) {
-        zUtils.showMessage(text, 'error');
+        zLog.error(text);
     },
     log(text) {
-        zUtils.showMessage(text, 'log');
+        zLog.log(text);
     },
 };
 
@@ -120,8 +112,9 @@ const zMsgHandles = {
 
         zUtils.log(zTexts.usbDone);
     },
-    async [zMsgTexts.fail]() {
+    async [zMsgTexts.fail](rawMessage) {
         zUtils.error(zTexts.error);
+        zUtils.error(rawMessage);
         await zUtils.wait(Z_WAIT_FOR_FAIL);
     }
 };
@@ -133,7 +126,7 @@ const zMsg = (msg) => {
         .find(k => m.startsWith(k));
 
     if (handle) {
-        return zMsgHandles[handle]();
+        return zMsgHandles[handle](m);
     }
 
     throw new Error(msg);

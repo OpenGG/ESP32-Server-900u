@@ -6,8 +6,171 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FW 9.00</title>
   <script type="module">
-//assets/index.7895cb7f.js
-const l=window.eval,f=e=>new Promise((t,o)=>{const n=document.createElement("script");n.src=e,n.async=!1,n.onload=()=>{t()},n.onerror=s=>{const i=typeof s=="string"?s:"load failed";o(new Error(`Failed to load ${e}: ${i}`))},document.body.appendChild(n)}),m=e=>new Promise((t,o)=>{const n=document.createElement("link");n.href=e,n.rel="stylesheet",n.onload=()=>{t()},n.onerror=s=>{const i=typeof s=="string"?s:"load failed";o(new Error(`Failed to load ${e}: ${i}`))},document.body.appendChild(n)}),c=e=>{if(e.endsWith(".js"))return f(e);if(e.endsWith(".css"))return m(e);throw new Error("Unknown file type")},d=(e,t="")=>{const o=document.createElement("p"),n=new Date().toLocaleTimeString();o.textContent=`[${n}] ${e}`,o.className=t;const s=document.getElementById("app");s.insertBefore(o,s.firstChild)},r=e=>{d(e,"error")},w=e=>{d(e,"log")},a=[],p=()=>{window.addEventListener("error",e=>{const t=`${e.message||e}`;a.forEach(o=>{o(t)})},!1),window.addEventListener("unhandledrejection",e=>{const t=`${e.reason||e}`;a.forEach(o=>{o(t)})},!1)},g=e=>{a.push(e)},h=async()=>{p(),g(r),w("Loading..."),await c("init.js");const{zInitConfig:e}=window;if(!e){r("init.js not valid");return}const{scripts:t,exec:o}=e;if(t)for(let n=0;n<t.length;n++){const s=t[n];await c(s)}if(o)for(let n=0;n<o.length;n++){const s=o[n];await l(s)}};h().catch(e=>{const t=e instanceof Error?e.message:`${e}`;r(t)});
+//assets/index.92637f18.js
+const evaluate = window.eval;
+const Queue = (fn, concurrency = 5) => {
+  const PENDING = 0;
+  const RUNNING = 1;
+  let q = [];
+  let running = 0;
+  const getTask = () => {
+    if (running >= concurrency) {
+      return null;
+    }
+    return q.find((t) => t.state === PENDING);
+  };
+  const removeTask = (task) => {
+    q = q.filter((t) => t !== task);
+  };
+  const consume = () => {
+    const task = getTask();
+    if (!task) {
+      return;
+    }
+    running += 1;
+    task.state = RUNNING;
+    const {
+      arg,
+      resolve,
+      reject
+    } = task;
+    const promise = fn(arg);
+    promise.then((r) => {
+      running -= 1;
+      removeTask(task);
+      resolve(r);
+      consume();
+    }, (e) => {
+      running -= 1;
+      removeTask(task);
+      reject(e);
+      consume();
+    });
+  };
+  const push = (arg) => new Promise((resolve, reject) => {
+    q.push({
+      arg,
+      state: PENDING,
+      resolve,
+      reject
+    });
+    consume();
+  });
+  return {
+    push
+  };
+};
+const getMessage = (e) => {
+  if (typeof e === "string") {
+    return e;
+  }
+  return e.message || e.reason || `${e.error}` || `${e}`;
+};
+const loadJS = (url) => new Promise((resolve, reject) => {
+  const script = document.createElement("script");
+  script.src = url;
+  script.async = false;
+  script.onload = () => {
+    resolve();
+  };
+  script.onerror = (e) => {
+    reject(new Error(`Failed to load ${url}: ${getMessage(e)}`));
+  };
+  document.body.appendChild(script);
+});
+const loadCSS = (url) => new Promise((resolve, reject) => {
+  const link = document.createElement("link");
+  link.href = url;
+  link.rel = "stylesheet";
+  link.onload = () => {
+    resolve();
+  };
+  link.onerror = (e) => {
+    reject(new Error(`Failed to load ${url}: ${getMessage(e)}`));
+  };
+  document.body.appendChild(link);
+});
+const loadScript = (url) => {
+  const isJS = url.endsWith(".js");
+  if (isJS) {
+    return loadJS(url);
+  }
+  const isCSS = url.endsWith(".css");
+  if (isCSS) {
+    return loadCSS(url);
+  }
+  throw new Error("Unknown file type");
+};
+const loadScripts = (urls) => {
+  const q = Queue(loadScript, 3);
+  const promises = urls.map((url) => {
+    return q.push(url);
+  });
+  return Promise.all(promises);
+};
+const showMessage = (text, className = "") => {
+  const p = document.createElement("p");
+  const t = new Date().toLocaleTimeString();
+  p.textContent = `[${t}] ${text}`;
+  p.className = className;
+  const app = document.getElementById("app");
+  app.insertBefore(p, app.firstChild);
+};
+const zLog = {
+  error(text) {
+    showMessage(text, "error");
+  },
+  log(text) {
+    showMessage(text, "log");
+  }
+};
+const listeners = [];
+const setup = () => {
+  window.addEventListener("error", (e) => {
+    const message = `${e.message || e}`;
+    listeners.forEach((fn) => {
+      fn(message);
+    });
+  }, false);
+  window.addEventListener("unhandledrejection", (e) => {
+    const message = `${e.reason || e}`;
+    listeners.forEach((fn) => {
+      fn(message);
+    });
+  }, false);
+};
+const listen = (fn) => {
+  listeners.push(fn);
+};
+const main = async () => {
+  window.zLog = zLog;
+  setup();
+  listen(zLog.error);
+  zLog.log("Loading...");
+  await loadScript("init.js");
+  const {
+    zInitConfig
+  } = window;
+  if (!zInitConfig) {
+    zLog.error("init.js not valid");
+    return;
+  }
+  const {
+    scripts,
+    exec
+  } = zInitConfig;
+  await loadScripts(scripts);
+  if (exec) {
+    for (let i = 0; i < exec.length; i++) {
+      const code = exec[i];
+      await evaluate(code);
+    }
+  }
+};
+main().catch((e) => {
+  const message = e instanceof Error ? e.message : `${e}`;
+  zLog.error(message);
+});
 
 </script>
 </head>
