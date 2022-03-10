@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html manifest="cache.manifest" lang="en">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FW 9.00</title>
   <script type="module">
-//assets/index.92637f18.js
+//assets/index.bec7203d.js
 const evaluate = window.eval;
 const Queue = (fn, concurrency = 5) => {
   const PENDING = 0;
@@ -142,11 +142,38 @@ const setup = () => {
 const listen = (fn) => {
   listeners.push(fn);
 };
+const ready = (update) => new Promise((resolve, reject) => {
+  const {
+    applicationCache
+  } = window;
+  if (!applicationCache) {
+    reject(new Error("ApplicationCache not supported"));
+    return;
+  }
+  let to = setTimeout(resolve, 1e3);
+  const onUpdate = (e) => {
+    clearTimeout(to);
+    update(e.loaded / e.total);
+  };
+  const onStart = () => {
+    clearTimeout(to);
+  };
+  const onFinish = () => {
+    resolve();
+  };
+  applicationCache.addEventListener("downloading", onStart, false);
+  applicationCache.addEventListener("progress", onUpdate, false);
+  applicationCache.addEventListener("cached", onFinish, false);
+});
 const main = async () => {
   window.zLog = zLog;
   setup();
   listen(zLog.error);
   zLog.log("Loading...");
+  await ready((progress) => {
+    const p = Math.round(progress * 100);
+    zLog.log(`Loading... ${p}%`);
+  });
   await loadScript("init.js");
   const {
     zInitConfig

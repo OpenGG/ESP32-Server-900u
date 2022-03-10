@@ -7,6 +7,7 @@
 #include "zserverNotFound.h"
 #include "zserverPsMock.h"
 #include "zserverUsb.h"
+#include "zserverCacheManifest.h"
 
 namespace zserver {
 void setup()
@@ -16,6 +17,7 @@ void setup()
     zroutes::files();
     zroutes::usb();
     zroutes::connTest();
+    zroutes::cacheManifest();
     zroutes::psMock();
 
     // static server

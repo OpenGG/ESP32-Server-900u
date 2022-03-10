@@ -18,11 +18,13 @@
     "dev": "vite",
     "release": "RELEASE=1 bash release.sh",
     "build": "npm run build:app",
-    "build:app": "vite build && rm -rf dist/assets",
+    "build:app": "vite build && rm -rf dist/assets && node appcache.mjs",
     "serve": "cd dist && yarn dlx http-server -c-1 -g -p80",
     "preview": "vite preview"
   },
   "devDependencies": {
+    "fs-extra": "^10.0.1",
+    "globby": "^13.1.1",
     "vite": "^2.8.6",
     "vite-plugin-singlefile": "^0.7.1",
     "vite-plugin-static-copy": "^0.3.1"
