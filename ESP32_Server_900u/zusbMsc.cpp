@@ -88,8 +88,8 @@ String enable()
 
     zdebug("zusbMsc::enable(): maxSectorIndex " + String(maxSectorIndex));
 
-    msc.vendorID("ESP32");
-    msc.productID("ESP32 Server");
+    msc.vendorID("ESP");
+    msc.productID(String(ESP.getChipModel()));
     msc.productRevision("1.0");
     msc.onRead(onRead);
     msc.mediaPresent(true);
