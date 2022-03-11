@@ -1,14 +1,20 @@
 const usbWaitTime = 10 * 1000;
 
 function disableUSB() {
-    var xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.open("POST", "/admin/usb/off", true);
     xhr.send(null);
 }
 
 function enableUSB() {
-    var xhr = new XMLHttpRequest();
+    const xhr = new XMLHttpRequest();
     xhr.open("POST", "/admin/usb/on", true);
+    xhr.send(null);
+}
+
+function deviceSleep() {
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/admin/device/powersave", true);
     xhr.send(null);
 }
 
