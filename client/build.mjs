@@ -65,7 +65,7 @@ __CONTENT__
 
 const embedCSS = embedScripts(
     base,
-    /<link [^>]*href="([^"]+)"[^>]*>/g,
+    /<link rel="stylesheet" href="([^"]+)"[^>]*>/g,
     `<style>
 __CONTENT__
 </style>`
