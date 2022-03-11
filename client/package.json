@@ -15,18 +15,13 @@
   },
   "homepage": "https://github.com/OpenGG/900#readme",
   "scripts": {
-    "dev": "vite",
-    "release": "RELEASE=1 bash release.sh",
-    "build": "npm run build:app",
-    "build:app": "vite build && rm -rf dist/assets",
-    "serve": "cd dist && yarn dlx http-server -c-1 -g -p80",
-    "preview": "vite preview"
+    "build": "node build.mjs",
+    "serve": "npm run build && cd dist && http-server -c-1 -g -p80"
   },
   "devDependencies": {
+    "ejs": "^3.1.6",
     "fs-extra": "^10.0.1",
     "globby": "^13.1.1",
-    "vite": "^2.8.6",
-    "vite-plugin-singlefile": "^0.7.1",
-    "vite-plugin-static-copy": "^0.3.1"
+    "http-server": "^14.1.0"
   }
 }

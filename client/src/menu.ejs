@@ -1,0 +1,25 @@
+<%
+menus.forEach((menu)=> {
+%>
+  <p>
+<%
+  menu.forEach((item) => {
+  btnCls = item.name.toLowerCase()
+    .replace(/v\d+\.\d+/i, '')
+    .trim()
+    .replace(/\s/g, '-')
+
+%>
+    <button
+      class="btn-payload btn-<%= btnCls %>"
+      data-desc="<%= item.desc %>"
+      <% if (item.bin) { %>data-bin="<%= item.bin %>" <% } %>
+      <% if (item.msg) { %>data-msg="<%= item.msg %>" <% } %>
+      <% if (item.custom) { %>data-cb="<%= item.custom %>" <% } %>
+    >
+      <%= item.name %>
+    </button>
+<% }); %>
+  </p>
+
+<% }); %>

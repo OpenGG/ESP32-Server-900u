@@ -4,7 +4,7 @@ set -e
 
 # config
 GZ_BAR="+10k"
-GZ_EXCLUDE="usb.bin kexploit.js"
+GZ_EXCLUDE="usb.bin"
 
 
 # exclude

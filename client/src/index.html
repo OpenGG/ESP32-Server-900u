@@ -1,17 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>FW 9.00</title>
+    <link rel="stylesheet" href="scripts/style.css" />
+    <meta charset="utf-8">
+    <title>Auto Exploit Light 9.00 fw</title>
 </head>
 
 <body>
-  <h1>FW 9.00</h1>
+    <h1>Auto Exploit Light 9.00 fw</h1>
+    <h3 class="status-bar">
+        Jailbreak Status: <span id="zJbStatus" class="running">...</span>
+    </h3>
+    <h3 class="status-bar">
+        Payload:
+        <span id="zPlStatus" class="pending">Please select button</span>
+    </h3>
+    <div id="zMenu" class="disabled">
+        __MENU_HTML__
+    </div>
+    <div class="author">
+        <p>Designed, Compiled by : Karo Sharifi</p>
+        <p>
+            Super Special Thanks To:
+            Sleirsgoevy,
+            Al Azif,
+            ChendoChap,
+            SiSTRo,
+            Specter,
+            Znullptr...
+        </p>
+    </div>
 
-  <div id="app"></div>
-  <script type="module" src="./main.js"></script>
+    <script src="scripts/menu.js"></script>
+    <script src="scripts/int64.js"></script>
+    <script src="scripts/rop.js"></script>
+    <script src="scripts/kexploit.js"></script>
+    <script src="scripts/webkit.js"></script>
 </body>
 
 </html>
