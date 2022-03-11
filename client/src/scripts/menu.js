@@ -197,7 +197,6 @@ zMenu.addEventListener('mouseover', proxy('btn-payload', (btn) => {
     }
 
     const desc = btn.getAttribute('data-desc')
-    console.log(desc)
 
     zPlStatus.className = ''
     zPlStatus.textContent = desc
