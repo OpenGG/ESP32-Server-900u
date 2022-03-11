@@ -3,7 +3,7 @@
 set -e
 
 # config
-GZ_BAR="+10k"
+GZ_BAR="+5k"
 GZ_EXCLUDE="usb.bin"
 
 
