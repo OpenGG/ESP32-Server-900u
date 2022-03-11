@@ -5,18 +5,12 @@
 #include "zserver.h"
 #include "zwifi.h"
 
-#define Z_SETUP_DELAY 1000
-
-#ifdef Z_DEBUG_ENABLE
-#define Z_SETUP_DELAY 3000
-#endif
-
 void setup()
 {
-    delay(Z_SETUP_DELAY);
-
     zdebugBegin(115200);
     zdebug("setup()");
+
+    zdebugDelay(3000);
 
     zfs.begin(true);
 
