@@ -1,10 +1,9 @@
 #include "ESPAsyncWebServer.h"
 #include "zconfig.h"
+#include "zdebug.h"
 #include "zfs.h"
 #include "zserverApp.h"
-#include "zdebug.h"
-
-#define US_TO_S 1000000
+#include "zsleep.h"
 
 static bool isFormating = false;
 
@@ -92,23 +91,9 @@ static void handleInfo(AsyncWebServerRequest* request)
     request->send(200, "text/html", output);
 }
 
-int sleepSecs = 0;
-
-// for continous deep sleep
-RTC_DATA_ATTR int sleepSecsRTC = 0;
-
-static void handlePowerSave(AsyncWebServerRequest* request) {
-    int secs = 30;
-    if(request->hasParam("secs")) {
-        AsyncWebParameter* p = request->getParam("secs");
-        int param = p->value().toInt();
-        if (param > 0) {
-            secs = param;
-        }
-    }
-
-    sleepSecs = secs;
-    sleepSecsRTC = secs;
+static void handleSleep(AsyncWebServerRequest* request)
+{
+    zsleep::sleep();
 
     request->send(200, "text/html", "Going to sleep");
 }
@@ -116,8 +101,6 @@ static void handlePowerSave(AsyncWebServerRequest* request) {
 namespace zroutes {
 void device()
 {
-    sleepSecs = sleepSecsRTC;
-
     zserverApp.on("/admin/device/format", HTTP_POST, handleFormat);
 
     zserverApp.on("/admin/device/reset", HTTP_POST, handleReset);
@@ -126,7 +109,7 @@ void device()
 
     zserverApp.on("/admin/device/info", HTTP_GET, handleInfo);
 
-    zserverApp.on("/admin/device/powersave", HTTP_POST, handlePowerSave);
+    zserverApp.on("/admin/device/sleep", HTTP_POST, handleSleep);
 }
 
 void deviceLoop()
@@ -140,12 +123,8 @@ void deviceLoop()
         delay(1000);
 
         ESP.restart();
-    } else if (sleepSecs > 0) {
-        zdebug("Going to sleep");
-        zdebugDelay(3000);
-
-        esp_sleep_enable_timer_wakeup(sleepSecs * US_TO_S);
-        esp_deep_sleep_start();
     }
+
+    zsleep::loop();
 }
 }
