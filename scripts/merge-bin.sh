@@ -27,14 +27,25 @@ elif [[ "$folder" == *"esp32s3"* ]]; then
   chip="esp32s3"
 fi
 
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # Mac OSX
+    esptool=$(ls $HOME/Library/Arduino15/packages/esp32/tools/esptool_py/*/esptool)
+    otaBin=$(ls $HOME/Library/Arduino15/packages/esp32/hardware/esp32/*/tools/partitions/boot_app0.bin)
+else
+
+    esptool="python $(ls $HOME/.arduino15/packages/esp32/tools/esptool_py/*/esptool.py)"
+    otaBin=$(ls $HOME/.arduino15/packages/esp32/hardware/esp32/*/tools/partitions/boot_app0.bin)
+fi
+
 cp $fs_bin data.lfs.bin
 
-esptool.py --chip "$chip" \
+$esptool --chip "$chip" \
     merge_bin \
     -o $folder.merged.bin \
     --flash_mode qio \
     --flash_size 4MB \
     0x1000 *.ino.bootloader.bin \
     0x8000 *.ino.partitions.bin \
+    0xe000 $otaBin \
     0x10000 *.ino.bin \
     0x290000 data.lfs.bin
