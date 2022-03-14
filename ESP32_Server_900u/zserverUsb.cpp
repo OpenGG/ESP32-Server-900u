@@ -2,7 +2,7 @@
 #include "zdebug.h"
 #include "zserverApp.h"
 
-#if defined(CONFIG_IDF_TARGET_ESP32S2) || defined(CONFIG_IDF_TARGET_ESP32S3)
+#if CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
 #include "zusbMsc.h"
 #define zusbImpl zusbMsc
 #else

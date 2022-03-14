@@ -1,7 +1,8 @@
-#if !defined(CONFIG_IDF_TARGET_ESP32S2) && !defined(CONFIG_IDF_TARGET_ESP32S3)
+#include <Arduino.h>
+
+#if !CONFIG_IDF_TARGET_ESP32S2 && !CONFIG_IDF_TARGET_ESP32S3
 
 #include "zconfig.h"
-#include <Arduino.h>
 
 #define Z_MAX_USB_TTL 15000
 

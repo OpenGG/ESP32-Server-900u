@@ -71,7 +71,7 @@ static void handleInfo(AsyncWebServerRequest* request)
     output += "Total Size: " + formatBytes(zfs.totalBytes()) + "<br>";
     output += "Used Space: " + formatBytes(zfs.usedBytes()) + "<br>";
     output += "Free Space: " + formatBytes(zfs.totalBytes() - zfs.usedBytes()) + "<br><hr>";
-#if defined(CONFIG_IDF_TARGET_ESP32S2) | defined(CONFIG_IDF_TARGET_ESP32S3)
+#if CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
     if (ESP.getPsramSize() > 0) {
         output += "###### PSRam information ######<br><br>";
         output += "Psram Size: " + formatBytes(ESP.getPsramSize()) + "<br>";
