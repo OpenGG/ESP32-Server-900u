@@ -31,7 +31,7 @@ cp $fs_bin data.lfs.bin
 
 esptool.py --chip "$chip" \
     merge_bin \
-    -o merged.bin \
+    -o $folder.merged.bin \
     --flash_mode qio \
     --flash_size 4MB \
     0x1000 *.ino.bootloader.bin \
