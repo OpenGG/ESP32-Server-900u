@@ -1,0 +1,57 @@
+name: main
+on:
+  workflow_dispatch:
+  push: # see: https://help.github.com/en/actions/reference/events-that-trigger-workflows#pull-request-event-pull_request
+    paths:
+    - '**.ino'
+    - '**.cpp'
+    - '**.h'
+  pull_request:
+jobs:
+  build:
+    name: ${{ matrix.arduino-boards-fqbn }} - test compiling examples
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arduino-boards-fqbn:
+          - esp32:esp32:esp32s2:CPUFreq=240,FlashMode=qio,FlashFreq=80,FlashSize=4M
+
+        include:
+          - arduino-boards-fqbn: esp32:esp32:esp32s2:CPUFreq=240,FlashMode=qio,FlashFreq=80,FlashSize=4M
+            platform-url: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
+
+      fail-fast: false
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: Checkout EspAsyncWebServer
+        uses: actions/checkout@v2
+        with:
+          repository: me-no-dev/EspAsyncWebServer
+          ref: master
+          path: CustomLibrary_EspAsyncWebServer
+
+      - name: Checkout AsyncTCP
+        uses: actions/checkout@v2
+        with:
+          repository: me-no-dev/AsyncTCP
+          ref: master
+          path: CustomLibrary_AsyncTCP
+
+      - name: Compile
+        uses: ArminJo/arduino-test-compile@v3
+        with:
+          arduino-board-fqbn: ${{ matrix.arduino-boards-fqbn }}
+          platform-default-url: ${{ env.PLATFORM_DEFAULT_URL }}
+          platform-url: ${{ matrix.platform-url }}
+          sketch-names: ${{ matrix.sketch-names }}
+          sketches-exclude: ${{ matrix.sketches-exclude }}
+          build-properties: ${{ toJson(matrix.build-properties) }}
+          debug-install: true
+      
+      - name: show
+        run: |
+          tree
+
