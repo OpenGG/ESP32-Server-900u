@@ -11,21 +11,25 @@ jobs:
   build:
     name: ${{ matrix.arduino-boards-fqbn }} - test compiling examples
     runs-on: ubuntu-latest
+    env:
+      PLATFORM_DEFAULT_URL: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
     strategy:
       matrix:
         arduino-boards-fqbn:
+          - esp32:esp32:esp32:CPUFreq=240,FlashMode=qio,FlashFreq=80,FlashSize=4M
           - esp32:esp32:esp32s2:CPUFreq=240,FlashMode=qio,FlashFreq=80,FlashSize=4M
-
-        include:
-          - arduino-boards-fqbn: esp32:esp32:esp32s2:CPUFreq=240,FlashMode=qio,FlashFreq=80,FlashSize=4M
-            platform-url: https://raw.githubusercontent.com/espressif/arduino-esp32/gh-pages/package_esp32_index.json
 
       fail-fast: false
 
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-        
+
+      - name: install deps
+        run: |
+          npm i -g pnpm
+          pip3 install littlefs-python esptool
+
       - name: Checkout EspAsyncWebServer
         uses: actions/checkout@v2
         with:
@@ -50,8 +54,15 @@ jobs:
           sketches-exclude: ${{ matrix.sketches-exclude }}
           build-properties: ${{ toJson(matrix.build-properties) }}
           debug-install: true
-      
-      - name: show
-        run: |
-          tree
 
+      - name: Build client img
+        run: |
+          scripts/build-client-img.sh
+          scripts/merge-bin.sh
+          tree
+      - name: Upload build result
+        uses: actions/upload-artifact@v3
+        with:
+          name: artifact
+          path: |
+            ESP32_Server_900u/build/**/*.bin

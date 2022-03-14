@@ -31,3 +31,5 @@ cp -r client/dist/* ./data/
 cd data
 
 find . -size "$GZ_BAR" $EXCLUDE -exec gzip -n {} \+
+
+cd ..
