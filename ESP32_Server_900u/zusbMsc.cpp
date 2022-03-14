@@ -1,3 +1,5 @@
+#if defined(CONFIG_IDF_TARGET_ESP32S2) || defined(CONFIG_IDF_TARGET_ESP32S3)
+
 #include "USB.h"
 #include "USBMSC.h"
 #include "zconfig.h"
@@ -6,12 +8,12 @@
 #include <Arduino.h>
 #include <math.h>
 
-#define MAX_USB_TTL 15000
-#define DISK_SECTOR_COUNT 8192
-#define DISK_SECTOR_SIZE 512
-#define USB_BIN_PATH "/usb.bin"
+#define Z_MAX_USB_TTL 15000
+#define Z_DISK_SECTOR_COUNT 8192
+#define Z_DISK_SECTOR_SIZE 512
+#define Z_USB_BIN_PATH "/usb.bin"
 
-// static uint32_t DISK_SECTOR_SIZE = 512;
+// static uint32_t Z_DISK_SECTOR_SIZE = 512;
 
 static USBMSC msc;
 
@@ -19,7 +21,7 @@ static File file;
 
 static uint32_t maxSectorIndex = 0;
 
-static uint8_t readBuff[DISK_SECTOR_SIZE] = { 0 };
+static uint8_t readBuff[Z_DISK_SECTOR_SIZE] = { 0 };
 
 static void closeFile()
 {
@@ -30,13 +32,13 @@ static void closeFile()
 static int32_t onRead(uint32_t lba, uint32_t offset, void* buffer, uint32_t bufsize)
 {
     lba = min(lba, maxSectorIndex);
-    uint32_t seekIndex = lba * DISK_SECTOR_SIZE;
-    uint32_t sectorSize = DISK_SECTOR_SIZE;
+    uint32_t seekIndex = lba * Z_DISK_SECTOR_SIZE;
+    uint32_t sectorSize = Z_DISK_SECTOR_SIZE;
     uint32_t readSize = min(sectorSize, file.size() - seekIndex);
 
     bool shouldClear = readSize != bufsize;
     if (shouldClear) {
-        memset(readBuff, 0, DISK_SECTOR_SIZE);
+        memset(readBuff, 0, Z_DISK_SECTOR_SIZE);
     }
 
     file.seek(seekIndex);
@@ -75,13 +77,13 @@ String enable()
 
     maxSectorIndex = 0;
 
-    file = zfs.open(USB_BIN_PATH, "r");
+    file = zfs.open(Z_USB_BIN_PATH, "r");
 
     zdebug("zusbMsc::enable()");
 
     if (!file) {
         zdebug("zusbMsc::enable(): file not found");
-        return String("File not exists: ") + String(USB_BIN_PATH);
+        return String("File not exists: ") + String(Z_USB_BIN_PATH);
     }
 
     int size = file.size();
@@ -90,10 +92,10 @@ String enable()
 
     if (size == 0) {
         file.close();
-        return String("Empty file: ") + String(USB_BIN_PATH);
+        return String("Empty file: ") + String(Z_USB_BIN_PATH);
     }
 
-    maxSectorIndex = ceil((float)size / (float)DISK_SECTOR_SIZE) - 1;
+    maxSectorIndex = ceil((float)size / (float)Z_DISK_SECTOR_SIZE) - 1;
 
     zdebug("zusbMsc::enable(): maxSectorIndex " + String(maxSectorIndex));
 
@@ -103,9 +105,9 @@ String enable()
     msc.onRead(onRead);
     msc.mediaPresent(true);
 
-    bool success = msc.begin(DISK_SECTOR_COUNT, DISK_SECTOR_SIZE);
-    zdebug("DISK_SECTOR_COUNT: " + String(DISK_SECTOR_COUNT));
-    zdebug("DISK_SECTOR_SIZE: " + String(DISK_SECTOR_SIZE));
+    bool success = msc.begin(Z_DISK_SECTOR_COUNT, Z_DISK_SECTOR_SIZE);
+    zdebug("DISK_SECTOR_COUNT: " + String(Z_DISK_SECTOR_COUNT));
+    zdebug("Z_DISK_SECTOR_SIZE: " + String(Z_DISK_SECTOR_SIZE));
     zdebug("usbmsc.begin(): " + String(success));
 
     // if (!success) {
@@ -147,7 +149,7 @@ void loop()
             hasEnabled = false;
 
             doDisable();
-        } else if (millis() >= (enTime + MAX_USB_TTL)) {
+        } else if (millis() >= (enTime + Z_MAX_USB_TTL)) {
             // auto disable
             hasEnabled = false;
             zdebug("zusbMsc::disable(): auto");
@@ -157,3 +159,5 @@ void loop()
     }
 }
 }
+
+#endif
