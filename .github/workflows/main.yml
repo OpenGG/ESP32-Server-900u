@@ -6,6 +6,8 @@ on:
     - '**.ino'
     - '**.cpp'
     - '**.h'
+    tags:
+    - "v*.*.*"
   pull_request:
 jobs:
   build:
@@ -66,3 +68,13 @@ jobs:
           name: artifact
           path: |
             ESP32_Server_900u/build/**/*.bin
+      - name: Prepare release
+        run: |
+          scripts/make-release.sh
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          draft: true
+          files: |
+            *.merged.*
