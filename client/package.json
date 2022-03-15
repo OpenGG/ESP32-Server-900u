@@ -15,11 +15,15 @@
   },
   "homepage": "https://github.com/OpenGG/900#readme",
   "scripts": {
+    "lint": "eslint src",
     "build": "node build.mjs",
     "serve": "npm run build && cd dist && http-server -c-1 -g -p80"
   },
   "devDependencies": {
     "ejs": "^3.1.6",
+    "eslint": "^8.11.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.4",
     "fs-extra": "^10.0.1",
     "globby": "^13.1.1",
     "http-server": "^14.1.0"
