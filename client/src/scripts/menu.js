@@ -1,28 +1,36 @@
+const zOnError = (e) => {
+    zJbStatus.className = 'fail'
+    zJbStatus.textContent = `Fail: ${e.message || e.reason || e}`
+}
+
+window.addEventListener('error', zOnError, false);
+window.addEventListener('unhandledrejection', zOnError, false);
+
 const usbWaitTime = 10 * 1000;
 
-function disableUSB() {
+const disableUSB = () => {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/admin/usb/off", true);
     xhr.send(null);
 }
 
-function enableUSB() {
+const enableUSB = () => {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/admin/usb/on", true);
     xhr.send(null);
 }
 
-function deviceSleep() {
+const deviceSleep = () => {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/admin/device/powersave", true);
     xhr.send(null);
 }
 
-function sleep(ms) {
+const sleep = (ms) => {
     return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-const getPayload = (url) => new Promise((resolve, reject) => {
+const zGetPayload = (url) => new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.responseType = "arraybuffer";
     xhr.open("GET", url, true);
@@ -39,13 +47,7 @@ const getPayload = (url) => new Promise((resolve, reject) => {
     };
 });
 
-const injectPayload = (PLS) => {
-    var payload_buffer = chain.syscall(477, 0, 0x300000, 7, 0x1002, -1, 0);
-    var pl = p.array_from_address(payload_buffer, PLS.byteLength * 4);
-    var buf = new Uint32Array(PLS);
-    pl.set(buf, 0);
-    var pthread = p.malloc(0x10);
-    chain.call(libKernelBase.add32(OFFSET_lk_pthread_create), pthread, 0x0, payload_buffer, 0);
+const zInjectPayload = (PLS) => {
     var payload_buffer = chain.syscall(477, 0, 0x300000, 7, 0x1002, -1, 0);
     var pl = p.array_from_address(payload_buffer, PLS.byteLength * 4);
     var buf = new Uint32Array(PLS);
@@ -131,14 +133,14 @@ const injectBinLoader = () => {
     chain.run();
 }
 
-const zJailbreakDone = () => {
+const jailbreakDone = () => {
     zJbStatus.className = 'done';
     zJbStatus.textContent = 'Success';
 
     zMenu.className = '';
 }
 
-const proxy = (className, fn) => (e) => {
+const zProxy = (className, fn) => (e) => {
     const {
         target,
     } = e
@@ -148,21 +150,21 @@ const proxy = (className, fn) => (e) => {
     }
 }
 
-let payloadLock = false
+let zPayloadLock = false
 
 const zPlStatusPrio = {
     className: 'pending',
     textContent: 'Please select button',
 }
 
-zMenu.addEventListener('click', proxy('btn-payload', async (btn) => {
+const zOnClickButton = zProxy('btn-payload', async (btn) => {
     const name = btn.textContent.trim()
     const desc = btn.getAttribute('data-desc')
     const custom = btn.getAttribute('data-custom')
     const bin = btn.getAttribute('data-bin')
     const msg = btn.getAttribute('data-msg')
 
-    payloadLock = true
+    zPayloadLock = true
 
     zPlStatus.className = 'running'
 
@@ -170,8 +172,8 @@ zMenu.addEventListener('click', proxy('btn-payload', async (btn) => {
 
     try {
         if (bin) {
-            const ab = await getPayload(bin)
-            injectPayload(ab)
+            const ab = await zGetPayload(bin)
+            zInjectPayload(ab)
         }
 
         if (custom) {
@@ -188,11 +190,11 @@ zMenu.addEventListener('click', proxy('btn-payload', async (btn) => {
     zPlStatusPrio.className = zPlStatus.className
     zPlStatusPrio.textContent = zPlStatus.textContent
 
-    payloadLock = false
-}), false)
+    zPayloadLock = false
+})
 
-zMenu.addEventListener('mouseover', proxy('btn-payload', (btn) => {
-    if (payloadLock) {
+const zOnHoverButton = zProxy('btn-payload', (btn) => {
+    if (zPayloadLock) {
         return
     }
 
@@ -200,25 +202,44 @@ zMenu.addEventListener('mouseover', proxy('btn-payload', (btn) => {
 
     zPlStatus.className = ''
     zPlStatus.textContent = desc
-}), false)
+});
 
-zMenu.addEventListener('mouseout', proxy('btn-payload', (btn) => {
-    if (payloadLock) {
+const zOnLeaveButton = zProxy('btn-payload', (btn) => {
+    if (zPayloadLock) {
         return
     }
 
     zPlStatus.className = zPlStatusPrio.className
     zPlStatus.textContent = zPlStatusPrio.textContent
-}), false)
+});
 
-document.addEventListener('DOMContentLoaded', () => {
-    poc()
-}, false)
+const zIsReady = () => document.readyState === 'complete';
 
-const onError = (e) => {
-    zJbStatus.className = 'fail'
-    zJbStatus.textContent = `Fail: ${e.message || e.reason || e}`
+const zReady = (fn) => {
+    if (zIsReady()) {
+        setTimeout(fn, 100);
+        return;
+    }
+    const proxyFn = () => {
+        if (!zIsReady()) {
+            return;
+        }
+        setTimeout(fn, 100);
+        document.removeEventListener('DOMContentLoaded', proxyFn, false);
+        window.removeEventListener('load', proxyFn, false);
+    };
+    document.addEventListener('DOMContentLoaded', proxyFn, false);
+    window.addEventListener('load', proxyFn, false);
 }
 
-window.addEventListener('error', onError, false);
-window.addEventListener('unhandledrejection', onError, false);
+const zMain = () => {
+    zMenu.addEventListener('click', zOnClickButton, false)
+    zMenu.addEventListener('mouseover', zOnHoverButton, false)
+    zMenu.addEventListener('mouseout', zOnLeaveButton, false)
+
+    poc();
+}
+
+zReady(() => {
+    zMain();
+});
