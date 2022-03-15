@@ -72,7 +72,7 @@ jobs:
           name: artifact
       - name: Prepare release
         run: |
-          aptitude install -y p7zip-full
+          apt-get install -y p7zip-full
           curl -f -O -L https://raw.githubusercontent.com/OpenGG/ESP32-Server-900u/main/scripts/make-release.sh
           chmod +x ./make-release.sh
           tree
