@@ -72,11 +72,15 @@ jobs:
           name: artifact
       - name: Prepare release
         run: |
+          aptitude install -y p7zip-full
+          curl -f -O -L https://raw.githubusercontent.com/OpenGG/ESP32-Server-900u/main/scripts/make-release.sh
+          chmod +x ./make-release.sh
           tree
           mv */*.merged.bin .
+          ./make-release.sh
       - name: Upload release
         uses: softprops/action-gh-release@v1
         with:
           draft: true
           files: |
-            *.merged.bin
+            *.merged.*
