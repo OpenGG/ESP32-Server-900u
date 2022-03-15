@@ -42,8 +42,9 @@ cp $fs_bin data.lfs.bin
 $esptool --chip "$chip" \
     merge_bin \
     -o $folder.merged.bin \
-    --flash_mode qio \
+    --flash_mode dio \
     --flash_size 4MB \
+    --flash_freq 80m \
     0x1000 *.ino.bootloader.bin \
     0x8000 *.ino.partitions.bin \
     0xe000 $otaBin \
