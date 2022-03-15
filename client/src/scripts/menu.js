@@ -14,11 +14,22 @@ const disableUSB = () => {
     xhr.send(null);
 }
 
-const enableUSB = () => {
+const enableUSB = () => new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open("POST", "/admin/usb/on", true);
+    xhr.onreadystatechange = () => {
+        if (xhr.readyState !== 4) {
+            return;
+        }
+
+        if (xhr.status === 200) {
+            resolve();
+        } else {
+            reject(new Error(`${xhr.statusText} ${xhr.responseText}`));
+        }
+    }
     xhr.send(null);
-}
+})
 
 const deviceSleep = () => {
     const xhr = new XMLHttpRequest();
