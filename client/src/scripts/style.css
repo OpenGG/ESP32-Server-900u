@@ -63,6 +63,7 @@ html {
     height: 50px;
     text-align: center;
     color: #fff;
+    margin: 0 10px;
 }
 
 .btn-payload:hover {
