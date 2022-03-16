@@ -1,6 +1,5 @@
 import fs from 'fs-extra'
 import assert from 'assert'
-import { renderMenu } from './src/menu.mjs'
 import path from 'path'
 
 const binSrc = path.resolve('./src/bin')
@@ -8,7 +7,6 @@ const binDst = path.resolve('./dist')
 const source = path.resolve('./src/index.html')
 const output = path.resolve('./dist/index.html')
 const base = path.dirname(source)
-
 
 const compose = (...fns) => async (arg) => {
     let current = arg
@@ -22,12 +20,6 @@ const compose = (...fns) => async (arg) => {
 }
 
 const readIndex = () => fs.readFile(source, 'utf8')
-
-const withMenu = async (html) => {
-    const menuHTML = await renderMenu()
-
-    return html.replace('__MENU_HTML__', menuHTML)
-}
 
 const embedScripts = (dir, regex, template) => async (html) => {
     const set = new Set()
@@ -74,7 +66,6 @@ __CONTENT__
 const out = await compose(
     embedCSS,
     embedJS,
-    withMenu,
     readIndex
 )()
 

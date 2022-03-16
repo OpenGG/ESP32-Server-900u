@@ -2,7 +2,7 @@
 
 /* eslint-disable no-bitwise, no-lone-blocks, max-len */
 
-/* global chain, p, libKernelBase, OFFSET_lk_pthread_create, poc */
+/* global chain, p, libKernelBase, OFFSET_lk_pthread_create, poc, zMenuConfig */
 
 const zJbStatus = document.getElementById('zJbStatus');
 const zMenu = document.getElementById('zMenu');
@@ -267,6 +267,39 @@ const zShowFwVer = () => {
   zFwVer.textContent = ver;
 };
 
+const zRenderMenu = () => {
+  zMenuConfig.forEach((menu) => {
+    const menuEl = document.createElement('p');
+    menu.forEach(({
+      name,
+      desc,
+      bin,
+      msg,
+      custom,
+    }) => {
+      const btnCls = name.toLowerCase()
+        .replace(/v\d+\.\d+/i, '')
+        .trim()
+        .replace(/\s/g, '-');
+      const btn = document.createElement('button');
+      btn.className = `btn-payload btn-${btnCls}`;
+      btn.textContent = name;
+      btn.setAttribute('data-desc', desc);
+      if (bin) {
+        btn.setAttribute('data-bin', bin);
+      }
+      if (msg) {
+        btn.setAttribute('data-msg', bin);
+      }
+      if (custom) {
+        btn.setAttribute('data-cb', custom);
+      }
+      menuEl.appendChild(btn);
+    });
+    zMenu.appendChild(menuEl);
+  });
+};
+
 const zIsReady = () => document.readyState === 'complete';
 
 const zReady = (fn) => {
@@ -292,6 +325,7 @@ const zMain = () => {
   zMenu.addEventListener('mouseout', zOnLeaveButton, false);
 
   zShowFwVer();
+  zRenderMenu();
 
   startTime = Date.now();
 
