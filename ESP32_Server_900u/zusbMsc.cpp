@@ -1,5 +1,7 @@
-#include <Arduino.h>
-#if CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
+#include "zusbConfig.h"
+
+#ifdef Z_USB_MSC
+
 #include "USB.h"
 #include "USBMSC.h"
 #include "zconfig.h"
@@ -7,7 +9,6 @@
 #include "zfs.h"
 #include <math.h>
 
-#define Z_MAX_USB_TTL 15000
 #define Z_DISK_SECTOR_COUNT 8192
 #define Z_DISK_SECTOR_SIZE 512
 #define Z_USB_BIN_PATH "/usb.bin"
@@ -148,7 +149,7 @@ void loop()
             hasEnabled = false;
 
             doDisable();
-        } else if (millis() >= (enTime + Z_MAX_USB_TTL)) {
+        } else if (millis() >= (enTime + Z_USB_TTL)) {
             // auto disable
             hasEnabled = false;
             zdebug("zusbMsc::disable(): auto");

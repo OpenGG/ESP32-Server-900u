@@ -1,19 +1,12 @@
 #include "ESPAsyncWebServer.h"
 #include "zdebug.h"
 #include "zserverApp.h"
-
-#if CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
-#include "zusbMsc.h"
-#define zusbImpl zusbMsc
-#else
 #include "zusb.h"
-#define zusbImpl zusb
-#endif
 
 static void handleUsbOn(AsyncWebServerRequest* request)
 {
     zdebug("/admin/usb/on");
-    String msg = zusbImpl::enable();
+    String msg = zusb::enable();
     zdebug("/admin/usb/on: " + msg);
 
     if (msg.length() != 0) {
@@ -27,7 +20,7 @@ static void handleUsbOn(AsyncWebServerRequest* request)
 static void handleUsbOff(AsyncWebServerRequest* request)
 {
     zdebug("/admin/usb/off");
-    String msg = zusbImpl::disable();
+    String msg = zusb::disable();
     zdebug("/admin/usb/off: " + msg);
 
     if (msg.length() != 0) {
@@ -41,7 +34,7 @@ static void handleUsbOff(AsyncWebServerRequest* request)
 namespace zroutes {
 void usb()
 {
-    zusbImpl::setup();
+    zusb::setup();
     zserverApp.on(
         "/admin/usb/on", HTTP_POST, handleUsbOn);
     zserverApp.on(
@@ -50,6 +43,6 @@ void usb()
 
 void usbLoop()
 {
-    zusbImpl::loop();
+    zusb::loop();
 }
 }

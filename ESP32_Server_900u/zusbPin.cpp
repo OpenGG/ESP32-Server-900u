@@ -1,10 +1,8 @@
-#include <Arduino.h>
+#include "zusbConfig.h"
 
-#if !CONFIG_IDF_TARGET_ESP32S2 && !CONFIG_IDF_TARGET_ESP32S3
+#ifndef Z_USB_MSC
 
 #include "zconfig.h"
-
-#define Z_MAX_USB_TTL 15000
 
 static int getPin()
 {
@@ -15,7 +13,7 @@ static int getPin()
 static long enTime = 0;
 static bool hasEnabled = false;
 
-namespace zusb {
+namespace zusbPin {
 void setup()
 {
     pinMode(getPin(), OUTPUT);
@@ -48,7 +46,7 @@ String disable()
 
 void loop()
 {
-    if (hasEnabled && millis() >= (enTime + Z_MAX_USB_TTL)) {
+    if (hasEnabled && millis() >= (enTime + Z_USB_TTL)) {
         zusb::disable();
     }
 }
