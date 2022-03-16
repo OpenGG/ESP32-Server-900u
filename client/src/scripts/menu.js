@@ -7,11 +7,13 @@
 const zJbStatus = document.getElementById('zJbStatus');
 const zMenu = document.getElementById('zMenu');
 const zPlStatus = document.getElementById('zPlStatus');
+const zFwVer = document.getElementById('zFwVer');
 
 /* exposed */
 
 /* eslint-disable-next-line no-unused-vars */
-const usbWaitTime = 10 * 1000;
+const usbWaitTime = 5 * 1000;
+// const usbWaitTime = 10 * 1000;
 
 /* eslint-disable-next-line no-unused-vars */
 const disableUSB = () => {
@@ -128,12 +130,21 @@ const injectBinLoader = () => {
   chain.run();
 };
 
+let startTime = 0;
+
 /* eslint-disable-next-line no-unused-vars */
 const jailbreakDone = () => {
-  zJbStatus.className = 'done';
-  zJbStatus.textContent = 'Success';
-
   zMenu.className = '';
+
+  const passed = (Date.now() - startTime) / 1000;
+
+  zJbStatus.className = 'done';
+  zJbStatus.textContent = `Success in ${passed.toFixed(1)}s`;
+};
+
+/* eslint-disable-next-line no-unused-vars */
+const jailbreakMessage = (msg) => {
+  zJbStatus.textContent = msg;
 };
 
 /* internals */
@@ -245,6 +256,17 @@ const zOnLeaveButton = zProxy('btn-payload', () => {
   zPlStatus.textContent = zPlStatusPrio.textContent;
 });
 
+const zShowFwVer = () => {
+  // const ua = 'Mozilla/5.0 (PlayStation 4 5.05) AppleWebKit/601.2 (KHTML, like Gecko)';
+  const ua = navigator.userAgent;
+
+  const matches = ua.match(/PlayStation \d (\d+\.\d+)/);
+
+  const ver = matches ? matches[1] : 'Unknown';
+
+  zFwVer.textContent = ver;
+};
+
 const zIsReady = () => document.readyState === 'complete';
 
 const zReady = (fn) => {
@@ -269,7 +291,11 @@ const zMain = () => {
   zMenu.addEventListener('mouseover', zOnHoverButton, false);
   zMenu.addEventListener('mouseout', zOnLeaveButton, false);
 
-  poc();
+  zShowFwVer();
+
+  startTime = Date.now();
+
+  setTimeout(poc, 1000);
 };
 
 zReady(() => {

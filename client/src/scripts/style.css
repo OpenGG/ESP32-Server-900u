@@ -5,7 +5,7 @@ html {
     color: #FFFFFF;
 }
 
-.status-bar {
+.heading {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
