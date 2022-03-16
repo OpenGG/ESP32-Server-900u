@@ -47,7 +47,7 @@ String disable()
 void loop()
 {
     if (hasEnabled && millis() >= (enTime + Z_USB_TTL)) {
-        zusb::disable();
+        zusbPin::disable();
     }
 }
 }
