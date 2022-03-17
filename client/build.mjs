@@ -1,73 +1,56 @@
+import Handlebars from 'handlebars';
 import fs from 'fs-extra'
-import assert from 'assert'
 import path from 'path'
+import menuConfig from './src/menuConfig.mjs';
+
+const handlebars = Handlebars.create()
 
 const binSrc = path.resolve('./src/bin')
 const binDst = path.resolve('./dist')
-const source = path.resolve('./src/index.html')
+const source = path.resolve('./src/index.hbs')
 const output = path.resolve('./dist/index.html')
 const base = path.dirname(source)
 
-const compose = (...fns) => async (arg) => {
-    let current = arg
+const buildTemplate = async () => {
+    const template = await fs.readFile(source, 'utf8')
 
-    for (let i = fns.length - 1; i > -1; i--) {
-        const fn = fns[i]
-        current = await fn(current)
-    }
+    let collectEmbeds = new Set()
 
-    return current
-}
+    handlebars.registerHelper('embed', (src) => {
+        collectEmbeds.add(src)
+        return ''
+    });
 
-const readIndex = () => fs.readFile(source, 'utf8')
+    const compiled = handlebars.compile(template, {
+        strict: true,
+    });
 
-const embedScripts = (dir, regex, template) => async (html) => {
-    const set = new Set()
+    compiled({})
 
-    for (; ;) {
-        const matches = regex.exec(html);
+    const embedMaps = new Map()
 
-        if (!matches) {
-            break;
+    await Promise.all([...collectEmbeds].map(async src => {
+        const content = await fs.readFile(
+            path.resolve(base, src),
+            'utf8'
+        )
+        embedMaps.set(src, content)
+    }))
+
+    handlebars.registerHelper('embed', (src) => {
+        if (embedMaps.has(src)) {
+            return ` */\n${embedMaps.get(src)}\n/* `
         }
 
-        set.add(matches[1]);
-    }
+        throw new Error(`Not found in 1st pass: ${src}`)
+    })
 
-    const files = [...set];
-
-    const contents = await Promise.all(files.map(f => fs.readFile(path.resolve(dir, f), 'utf8')))
-
-    return html.replace(regex, (_, g1) => {
-        const index = files.indexOf(g1)
-
-        assert.notEqual(index, -1)
-
-        return template.replace('__CONTENT__', contents[index])
+    return compiled({
+        menuConfig
     })
 }
 
-const embedJS = embedScripts(
-    base,
-    /<script src="([^"]+)"><\/script>/g,
-    `<script>
-__CONTENT__
-</script>`
-);
-
-const embedCSS = embedScripts(
-    base,
-    /<link rel="stylesheet" href="([^"]+)"[^>]*>/g,
-    `<style>
-__CONTENT__
-</style>`
-)
-
-const out = await compose(
-    embedCSS,
-    embedJS,
-    readIndex
-)()
+const out = await buildTemplate()
 
 await fs.outputFile(output, out)
 

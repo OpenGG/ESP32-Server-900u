@@ -16,14 +16,18 @@
   "homepage": "https://github.com/OpenGG/900#readme",
   "scripts": {
     "lint": "eslint src",
+    "format": "prettier --write src",
     "build": "node build.mjs",
     "serve": "npm run build && cd dist && http-server -c-1 -g -p80"
   },
   "devDependencies": {
     "eslint": "^8.11.0",
     "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-import": "^2.25.4",
     "fs-extra": "^10.0.1",
-    "http-server": "^14.1.0"
+    "handlebars": "^4.7.7",
+    "http-server": "^14.1.0",
+    "prettier": "^2.6.0"
   }
 }
