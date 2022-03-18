@@ -1,10 +1,10 @@
 #include "ESPAsyncWebServer.h"
-#include "zfs.h"
 #include "zserverApp.h"
 #include "zserverCacheManifest.h"
 #include "zserverConnTest.h"
 #include "zserverDevice.h"
 #include "zserverFiles.h"
+#include "zserverFs.h"
 #include "zserverNotFound.h"
 #include "zserverPsMock.h"
 #include "zserverUsb.h"
@@ -21,10 +21,7 @@ void setup()
     zroutes::psMock();
 
     // static server
-    zserverApp.serveStatic("/", zfs, "/")
-        .setDefaultFile("index.html")
-        // cache for 1 year
-        .setCacheControl("max-age=31536000");
+    zroutes::fs();
 
     // fallback 404
     zroutes::notFound();
