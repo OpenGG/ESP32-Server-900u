@@ -182,3 +182,9 @@ const injectBinLoader = () => {
   // }
   chain.run();
 };
+
+const deviceSleep = () => {
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "/admin/device/powersave", true);
+  xhr.send(null);
+};

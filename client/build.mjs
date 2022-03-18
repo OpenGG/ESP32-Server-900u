@@ -21,6 +21,13 @@ const buildTemplate = async () => {
         return ''
     });
 
+    handlebars.registerHelper('cls', (n) => {
+        return n.toLowerCase()
+            .replace(/v\d+\.\d+/i, '')
+            .trim()
+            .replace(/\s/g, '-')
+    });
+
     const compiled = handlebars.compile(template, {
         strict: true,
     });
