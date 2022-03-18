@@ -37,7 +37,7 @@ const zMenuInit = () => {
       }
 
       if (custom) {
-        window[custom]();
+        (0, eval)(`${custom}()`);
       }
 
       zPlStatus.className = "done";
