@@ -4,7 +4,7 @@ const detectFw = () => {
 
   const UA = navigator.userAgent;
 
-  const matches = UA.match(/PlayStation \d (\d+\.\d+)/);
+  const matches = UA.match(/PlayStation \d\/(\d+\.\d+)/);
 
   const ver = matches ? matches[1] : "Unknown";
 
