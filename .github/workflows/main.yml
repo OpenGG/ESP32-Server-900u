@@ -1,6 +1,12 @@
 name: main
 on:
   workflow_dispatch:
+    inputs:
+      buildClient:
+        description: 'building client with npm'
+        required: true
+        default: true
+        type: boolean
   push:
   pull_request:
 jobs:
@@ -50,6 +56,11 @@ jobs:
           build-properties: ${{ toJson(matrix.build-properties) }}
           debug-install: true
           debug-compile: true
+
+      - name: Build client (optional)
+        if: ${{ github.event.inputs.buildClient != 'false' }}
+        run: |
+          scripts/build-client.sh
 
       - name: Build client img
         run: |

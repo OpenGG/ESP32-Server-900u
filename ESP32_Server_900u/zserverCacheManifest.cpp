@@ -8,7 +8,7 @@
 static void handleCacheManifest(AsyncWebServerRequest* request)
 {
     if (!zfs.exists(Z_CACHE_MANIFEST)) {
-        request->send(200, Z_MIME_PLAIN_TEXT, "Not found");
+        request->send(Z_STATUS_NOT_FOUND, Z_MIME_PLAIN_TEXT, "Not found");
         return;
     }
 

@@ -1,8 +1,8 @@
 #pragma once
 #include <Arduino.h>
 
-namespace zconfig {
-void setup();
+namespace zcfg {
+void begin();
 
 String get(
     const char* key,

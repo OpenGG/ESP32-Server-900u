@@ -2,8 +2,6 @@
 
 set -e
 
-./scripts/build-client.sh
-
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # Mac OSX
     mklittlefs=$(ls $HOME/Library/Arduino15/packages/esp32/tools/mklittlefs/*/mklittlefs)

@@ -11,21 +11,21 @@ static void handleFormat(AsyncWebServerRequest* request)
 {
     isFormating = true;
 
-    request->send(200, Z_MIME_PLAIN_TEXT, "Formatting, wait for it to reboot.");
+    request->send(Z_STATUS_OK, Z_MIME_PLAIN_TEXT, "Formatting, wait for it to reboot.");
 }
 
 static void handleReset(AsyncWebServerRequest* request)
 {
     zconfig::clear();
 
-    request->send(200, Z_MIME_PLAIN_TEXT, Z_MSG_DONE);
+    request->send(Z_STATUS_OK, Z_MIME_PLAIN_TEXT, Z_MSG_DONE);
 }
 
 static void handleReboot(AsyncWebServerRequest* request)
 {
     ESP.restart();
 
-    request->send(200, Z_MIME_PLAIN_TEXT, Z_MSG_DONE);
+    request->send(Z_STATUS_OK, Z_MIME_PLAIN_TEXT, Z_MSG_DONE);
 }
 
 static String formatBytes(size_t bytes)
@@ -47,55 +47,73 @@ static void handleInfo(AsyncWebServerRequest* request)
     FlashMode_t ideMode = ESP.getFlashChipMode();
     String mcuType = CONFIG_IDF_TARGET;
     mcuType.toUpperCase();
-    String output = "<!DOCTYPE html>";
-    output += "<hr>###### Software ######<br><br>";
-    output += "SDK version: " + String(ESP.getSdkVersion()) + "<br><hr>";
-    output += "###### Board ######<br><br>";
-    output += "MCU: " + mcuType + "<br>";
+    String output = "";
+    output += "###### Software ######\n";
+    output += "SDK version: " + String(ESP.getSdkVersion()) + "\n";
+    output += "\n";
+    output += "###### Board ######\n";
+    output += "MCU: " + mcuType + "\n";
 #if defined(USB_PRODUCT)
-    output += "Board: " + String(USB_PRODUCT) + "<br>";
+    output += "Board: " + String(USB_PRODUCT) + "\n";
 #endif
-    output += "Chip Id: " + String(ESP.getChipModel()) + "<br>";
-    output += "CPU frequency: " + String(ESP.getCpuFreqMHz()) + "MHz<br>";
-    output += "Cores: " + String(ESP.getChipCores()) + "<br><hr>";
-    output += "###### Flash chip information ######<br><br>";
-    output += "Flash chip Id: " + String(ESP.getFlashChipMode()) + "<br>";
-    output += "Estimated Flash size: " + formatBytes(ESP.getFlashChipSize()) + "<br>";
-    output += "Flash frequency: " + String(flashFreq) + " MHz<br>";
+    output += "Chip Id: " + String(ESP.getChipModel()) + "\n";
+    output += "CPU frequency: " + String(ESP.getCpuFreqMHz()) + "MHz\n";
+    output += "Cores: " + String(ESP.getChipCores()) + "\n";
+    output += "\n";
+    output += "###### Flash chip information ######\n";
+    output += "Flash chip Id: " + String(ESP.getFlashChipMode()) + "\n";
+    output += "Estimated Flash size: " + formatBytes(ESP.getFlashChipSize()) + "\n";
+    output += "Flash frequency: " + String(flashFreq) + " MHz\n";
     output += "Flash write mode: " + String((ideMode == FM_QIO ? "QIO" : ideMode == FM_QOUT ? "QOUT"
                       : ideMode == FM_DIO                                                   ? "DIO"
                       : ideMode == FM_DOUT                                                  ? "DOUT"
                                                                                             : "UNKNOWN"))
-        + "<br><hr>";
-    output += "###### Storage information ######<br><br>";
-    output += "Total Size: " + formatBytes(zfs.totalBytes()) + "<br>";
-    output += "Used Space: " + formatBytes(zfs.usedBytes()) + "<br>";
-    output += "Free Space: " + formatBytes(zfs.totalBytes() - zfs.usedBytes()) + "<br><hr>";
+        + "\n";
+    output += "\n";
+    output += "###### Storage information ######\n";
+    output += "Total Size: " + formatBytes(zfs.totalBytes()) + "\n";
+    output += "Used Space: " + formatBytes(zfs.usedBytes()) + "\n";
+    output += "Free Space: " + formatBytes(zfs.totalBytes() - zfs.usedBytes()) + "\n";
+    output += "\n";
 #if CONFIG_IDF_TARGET_ESP32S2 || CONFIG_IDF_TARGET_ESP32S3
     if (ESP.getPsramSize() > 0) {
-        output += "###### PSRam information ######<br><br>";
-        output += "Psram Size: " + formatBytes(ESP.getPsramSize()) + "<br>";
-        output += "Free psram: " + formatBytes(ESP.getFreePsram()) + "<br>";
-        output += "Max alloc psram: " + formatBytes(ESP.getMaxAllocPsram()) + "<br><hr>";
+        output += "###### PSRam information ######\n";
+        output += "Psram Size: " + formatBytes(ESP.getPsramSize()) + "\n";
+        output += "Free psram: " + formatBytes(ESP.getFreePsram()) + "\n";
+        output += "Max alloc psram: " + formatBytes(ESP.getMaxAllocPsram()) + "\n";
+        output += "\n";
     }
 #endif
-    output += "###### Ram information ######<br><br>";
-    output += "Ram size: " + formatBytes(ESP.getHeapSize()) + "<br>";
-    output += "Free ram: " + formatBytes(ESP.getFreeHeap()) + "<br>";
-    output += "Max alloc ram: " + formatBytes(ESP.getMaxAllocHeap()) + "<br><hr>";
-    output += "###### Sketch information ######<br><br>";
-    output += "Sketch hash: " + ESP.getSketchMD5() + "<br>";
-    output += "Sketch size: " + formatBytes(ESP.getSketchSize()) + "<br>";
-    output += "Free space available: " + formatBytes(ESP.getFreeSketchSpace() - ESP.getSketchSize()) + "<br><hr>";
-    output += "</html>";
-    request->send(200, "text/html", output);
+    output += "###### Ram information ######\n";
+    output += "Ram size: " + formatBytes(ESP.getHeapSize()) + "\n";
+    output += "Free ram: " + formatBytes(ESP.getFreeHeap()) + "\n";
+    output += "Max alloc ram: " + formatBytes(ESP.getMaxAllocHeap()) + "\n";
+    output += "\n";
+    output += "###### Sketch information ######\n";
+    output += "Sketch hash: " + ESP.getSketchMD5() + "\n";
+    output += "Sketch size: " + formatBytes(ESP.getSketchSize()) + "\n";
+    output += "Free space available: " + formatBytes(ESP.getFreeSketchSpace() - ESP.getSketchSize()) + "\n";
+    output += "\n";
+    output += "###### Config information #####\n";
+    output += "wifi_connect: " + zconfig::get("wifi_connect", "") + "\n";
+    output += "wifi_ap_ssid: " + zconfig::get("wifi_ap_ssid", "") + "\n";
+    output += "wifi_ap_pass: " + zconfig::get("wifi_ap_pass", "") + "\n";
+    output += "wifi_ap_ip: " + zconfig::get("wifi_ap_ip", "") + "\n";
+    output += "wifi_ap_ch: " + zconfig::get("wifi_ap_ch", "") + "\n";
+    output += "wifi_ssid: " + zconfig::get("wifi_ssid", "") + "\n";
+    output += "wifi_pass: " + zconfig::get("wifi_pass", "") + "\n";
+    output += "wifi_hostname: " + zconfig::get("wifi_hostname", "") + "\n";
+    output += "usb_pin: " + zconfig::get("usb_pin", "") + "\n";
+    output += "device_sleep: " + zconfig::get("device_sleep", "") + "\n";
+    output += "\n";
+    request->send(Z_STATUS_OK, Z_MIME_PLAIN_TEXT, output);
 }
 
 static void handleSleep(AsyncWebServerRequest* request)
 {
     zsleep::sleep();
 
-    request->send(200, "text/html", "Going to sleep");
+    request->send(Z_STATUS_OK, Z_MIME_PLAIN_TEXT, "Going to sleep");
 }
 
 namespace zroutes {
@@ -124,7 +142,5 @@ void deviceLoop()
 
         ESP.restart();
     }
-
-    zsleep::loop();
 }
 }

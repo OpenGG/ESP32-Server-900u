@@ -5,15 +5,15 @@
 static void handleNotFound(AsyncWebServerRequest* request)
 {
     zdebug("404 request");
-    zdebug("version: " + String(request->version()));
-    zdebug("method: " + String(request->method()));
-    zdebug("url: " + String(request->url()));
-    zdebug("host: " + String(request->host()));
-    zdebug("contentType: " + String(request->contentType()));
-    zdebug("contentLength: " + String(request->contentLength()));
-    zdebug("multipart: " + String(request->multipart()));
+    zdebug("version: ", request->version());
+    zdebug("method: ", request->method());
+    zdebug("url: ", request->url());
+    zdebug("host: ", request->host());
+    zdebug("contentType: ", request->contentType());
+    zdebug("contentLength: ", request->contentLength());
+    zdebug("multipart: ", request->multipart());
 
-    request->send(404, Z_MIME_PLAIN_TEXT, "Not found");
+    request->send(Z_STATUS_NOT_FOUND, Z_MIME_PLAIN_TEXT, "Not found");
 }
 
 namespace zroutes {

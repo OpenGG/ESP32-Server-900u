@@ -3,7 +3,10 @@
 #include "zdns.h"
 #include "zfs.h"
 #include "zserver.h"
+#include "zsleep.h"
 #include "zwifi.h"
+
+int sleepTime = 0;
 
 void setup()
 {
@@ -13,7 +16,6 @@ void setup()
     zdebugDelay(3000);
 
     zfs.begin(true);
-
     zconfig::setup();
 
     IPAddress ip = zwifi::setup();
@@ -21,6 +23,14 @@ void setup()
     zserver::setup();
 
     zdns::setup(ip);
+
+    int deviceSleep = zconfig::get("device_sleep", "30").toInt();
+
+    zdebug("deviceSleep: ", deviceSleep);
+
+    if (deviceSleep > 0) {
+        sleepTime = millis() + (deviceSleep * 60 * 1000);
+    }
 
     zdebug("setup() end");
 }
@@ -30,12 +40,17 @@ void setup()
 void loop()
 {
     // counter += 1;
-    // zdebug("loop(): " + String(counter));
-    zconfig::loop();
+    // zdebug("loop(): ", counter);
 
     zserver::loop();
 
     zdns::loop();
 
     // delay(1000);
+
+    if (sleepTime > 0 && millis() > sleepTime) {
+        zsleep::sleep();
+    }
+
+    zsleep::loop();
 }
