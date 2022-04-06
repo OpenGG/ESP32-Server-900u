@@ -1,4 +1,5 @@
 #include "esp_sleep.h"
+#include "zdebug.h"
 #include <Arduino.h>
 
 static bool shouldSleep = false;
@@ -22,6 +23,8 @@ void loop()
     }
 
     shouldSleep = false;
+
+    zdebug("Going to sleep");
 
     delay(1000);
     doSleep();

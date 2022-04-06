@@ -16,43 +16,43 @@ static void handleListFiles(AsyncWebServerRequest* request)
     }
     dir.close();
 
-    request->send(200, Z_MIME_PLAIN_TEXT, out);
+    request->send(Z_STATUS_OK, Z_MIME_PLAIN_TEXT, out);
 }
 
 static void handleDelete(AsyncWebServerRequest* request)
 {
     if (!request->hasParam("file", true)) {
-        request->send(400, Z_MIME_PLAIN_TEXT, "file not provided");
+        request->send(Z_STATUS_CLIENT_ERROR, Z_MIME_PLAIN_TEXT, "file not provided");
         return;
     }
     String path = request->getParam("file", true)->value();
     if (path.length() == 0 || path.equals("/")) {
-        request->send(400, Z_MIME_PLAIN_TEXT, "file not valid");
+        request->send(Z_STATUS_CLIENT_ERROR, Z_MIME_PLAIN_TEXT, "file not valid");
         return;
     }
     if (!path.startsWith("/")) {
         path = "/" + path;
     }
     if (!zfs.exists(path)) {
-        request->send(404, Z_MIME_PLAIN_TEXT, "file not exists");
+        request->send(Z_STATUS_NOT_FOUND, Z_MIME_PLAIN_TEXT, "file not exists");
         return;
     }
     zfs.remove(path);
-    request->send(200, Z_MIME_PLAIN_TEXT, Z_MSG_DONE);
+    request->send(Z_STATUS_OK, Z_MIME_PLAIN_TEXT, Z_MSG_DONE);
 }
 
 File upFile;
 
 static void handleFileUpload(AsyncWebServerRequest* request, String filename, size_t index, uint8_t* data, size_t len, bool final)
 {
-    zdebug("onUpload: " + request->url() + " " + filename);
+    zdebug("onUpload: ", request->url(), " ", filename);
 
     if (!filename.startsWith("/")) {
         filename = "/" + filename;
     }
 
     if (filename.equals("/")) {
-        request->send(400, Z_MIME_PLAIN_TEXT, "file not valid");
+        request->send(Z_STATUS_CLIENT_ERROR, Z_MIME_PLAIN_TEXT, "file not valid");
         return;
     }
 
@@ -76,8 +76,8 @@ void files()
 
     zserverApp.on(
         "/admin/files/upload", HTTP_POST, [](AsyncWebServerRequest* request) {
-                zdebug("onRequest: " + request->url());
-                request->send(200, Z_MIME_PLAIN_TEXT, Z_MSG_DONE); },
+                zdebug("onRequest: ", request->url());
+                request->send(Z_STATUS_OK, Z_MIME_PLAIN_TEXT, Z_MSG_DONE); },
         handleFileUpload);
 }
 }

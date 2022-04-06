@@ -7,28 +7,28 @@ static void handleUsbOn(AsyncWebServerRequest* request)
 {
     zdebug("/admin/usb/on");
     String msg = zusb::enable();
-    zdebug("/admin/usb/on: " + msg);
+    zdebug("/admin/usb/on: ", msg);
 
     if (msg.length() != 0) {
-        request->send(503, Z_MIME_PLAIN_TEXT, msg);
+        request->send(Z_STATUS_SERVER_ERROR, Z_MIME_PLAIN_TEXT, msg);
         return;
     }
 
-    request->send(200, Z_MIME_PLAIN_TEXT, Z_MSG_DONE);
+    request->send(Z_STATUS_OK, Z_MIME_PLAIN_TEXT, Z_MSG_DONE);
 }
 
 static void handleUsbOff(AsyncWebServerRequest* request)
 {
     zdebug("/admin/usb/off");
     String msg = zusb::disable();
-    zdebug("/admin/usb/off: " + msg);
+    zdebug("/admin/usb/off: ", msg);
 
     if (msg.length() != 0) {
-        request->send(503, Z_MIME_PLAIN_TEXT, msg);
+        request->send(Z_STATUS_SERVER_ERROR, Z_MIME_PLAIN_TEXT, msg);
         return;
     }
 
-    request->send(200, Z_MIME_PLAIN_TEXT, Z_MSG_DONE);
+    request->send(Z_STATUS_OK, Z_MIME_PLAIN_TEXT, Z_MSG_DONE);
 }
 
 namespace zroutes {

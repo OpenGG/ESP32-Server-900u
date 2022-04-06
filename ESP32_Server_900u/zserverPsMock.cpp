@@ -77,13 +77,13 @@ static void handleConsoleUpdate(AsyncWebServerRequest* request)
         String name = p->name();
 
         rgn = split(name, "list/", "/");
-        zdebug("/update/ps4/" + rgn);
+        zdebug("/update/ps4/", rgn);
     }
 
     int params = request->params();
     String xmlStr = "<?xml version=\"1.0\" ?><update_data_list><region id=\"" + rgn + "\"><force_update><system level0_system_ex_version=\"0\" level0_system_version=\"" + Version + "\" level1_system_ex_version=\"0\" level1_system_version=\"" + Version + "\"/></force_update><system_pup ex_version=\"0\" label=\"" + lblVersion + "\" sdk_version=\"" + sVersion + "\" version=\"" + Version + "\"><update_data update_type=\"full\"><image size=\"" + imgSize + "\">" + imgPath + "</image></update_data></system_pup><recovery_pup type=\"default\"><system_pup ex_version=\"0\" label=\"" + lblVersion + "\" sdk_version=\"" + sVersion + "\" version=\"" + Version + "\"/><image size=\"" + imgSize + "\">" + imgPath + "</image></recovery_pup></region></update_data_list>";
 
-    request->send(200, "text/xml", xmlStr);
+    request->send(Z_STATUS_OK, Z_MIME_XML, xmlStr);
 }
 
 namespace zroutes {

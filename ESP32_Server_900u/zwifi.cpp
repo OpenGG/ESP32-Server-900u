@@ -30,7 +30,7 @@ static IPAddress start(
     WiFi.softAPConfig(Server_IP, Server_IP, Subnet_Mask);
 
     // print the IP of access point
-    zdebug("Current ip: " + WiFi.softAPIP().toString());
+    zdebug("Current ip: ", WiFi.softAPIP().toString());
 
     return Server_IP;
 }
@@ -70,11 +70,11 @@ IPAddress setup()
     String wifi_pass = zconfig::get("wifi_pass", "password");
     String wifi_hostname = zconfig::get("wifi_hostname", "esp.local");
 
-    zdebug("wifi_connect: " + wifi_connect);
-    zdebug("wifi_ap_ssid: " + wifi_ap_ssid);
-    zdebug("wifi_ap_pass: " + wifi_ap_pass);
-    zdebug("wifi_ap_ip: " + wifi_ap_ip);
-    zdebug("wifi_ap_ch: " + String(wifi_ap_ch));
+    zdebug("wifi_connect: ", wifi_connect);
+    zdebug("wifi_ap_ssid: ", wifi_ap_ssid);
+    zdebug("wifi_ap_pass: ", wifi_ap_pass);
+    zdebug("wifi_ap_ip: ", wifi_ap_ip);
+    zdebug("wifi_ap_ch: ", wifi_ap_ch);
 
     bool apMode = wifi_connect.equals("0");
 

@@ -4,7 +4,7 @@ set -e
 
 # config
 GZ_BAR="+5k"
-GZ_EXCLUDE="usb.bin"
+GZ_EXCLUDE="usb.bin config.txt"
 
 
 # exclude
@@ -23,9 +23,9 @@ pnpm run build
 cd ..
 
 # copy to data/
-rm -f data/*
+rm -rf data
 
-cp -r client/dist/* ./data/
+cp -r client/dist ./data
 
 # gz
 cd data

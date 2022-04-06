@@ -4,11 +4,7 @@
 
 #include "zconfig.h"
 
-static int getPin()
-{
-    // set the pin you want to use for usb control
-    return zconfig::get("usb_pin", "4").toInt();
-}
+static int pin = 4;
 
 static long enTime = 0;
 static bool hasEnabled = false;
@@ -16,7 +12,8 @@ static bool hasEnabled = false;
 namespace zusbPin {
 void setup()
 {
-    pinMode(getPin(), OUTPUT);
+    pin = zconfig::get("usb_pin", "4").toInt();
+    pinMode(pin, OUTPUT);
 }
 
 String enable()
@@ -25,7 +22,7 @@ String enable()
         return "Usb already enabled";
     }
 
-    digitalWrite(getPin(), HIGH);
+    digitalWrite(pin, HIGH);
     enTime = millis();
     hasEnabled = true;
 
@@ -40,7 +37,7 @@ String disable()
 
     enTime = 0;
     hasEnabled = false;
-    digitalWrite(getPin(), LOW);
+    digitalWrite(pin, LOW);
     return "";
 }
 

@@ -3,7 +3,7 @@
 
 static void handleConnTest(AsyncWebServerRequest* request)
 {
-    request->send(200, Z_MIME_PLAIN_TEXT, "Microsoft Connect Test");
+    request->send(Z_STATUS_OK, Z_MIME_PLAIN_TEXT, "Microsoft Connect Test");
 }
 
 namespace zroutes {
