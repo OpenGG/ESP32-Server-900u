@@ -23,7 +23,7 @@ const buildTemplate = async () => {
 
     handlebars.registerHelper('cls', (n) => {
         return n.toLowerCase()
-            .replace(/v\d+\.\d+/i, '')
+            .replace(/v\d+(?:\.\d+)*/i, '')
             .trim()
             .replace(/\s/g, '-')
     });

@@ -1,9 +1,9 @@
 export default [
   [
     {
-      name: "GoldHen V2.2",
-      desc: "GoldHen v2.2 by SISTR0 for PS4 9.00 Fw",
-      bin: "goldhen_2.2_900.bin",
+      name: "GoldHen V2.2.2",
+      desc: "GoldHen v2.2.2 by SISTR0 for PS4 9.00 Fw",
+      bin: "goldhen_2.2.2_900.bin",
     },
     {
       name: "ESP Powersave",
