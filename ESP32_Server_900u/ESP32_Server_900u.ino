@@ -24,7 +24,7 @@ void setup()
 
     zdns::setup(ip);
 
-    int deviceSleep = zconfig::get("device_sleep", "30").toInt();
+    int deviceSleep = zconfig::getInt("device_sleep", 30);
 
     zdebug("deviceSleep: ", deviceSleep);
 

@@ -9,42 +9,53 @@ static int pin = 4;
 static long enTime = 0;
 static bool hasEnabled = false;
 
+static void doDisable()
+{
+    digitalWrite(pin, LOW);
+}
+
 namespace zusbPin {
 void setup()
 {
-    pin = zconfig::get("usb_pin", "4").toInt();
+    pin = zconfig::getInt("usb_pin", 4);
     pinMode(pin, OUTPUT);
 }
 
-String enable()
+bool enable(char* msg, size_t n)
 {
     if (hasEnabled) {
-        return "Usb already enabled";
+        strncpy(msg, "Usb already enabled", n - 1);
+        return false;
     }
 
     digitalWrite(pin, HIGH);
     enTime = millis();
     hasEnabled = true;
 
-    return "";
+    return true;
 }
 
-String disable()
+bool disable(char* msg, size_t n)
 {
     if (!hasEnabled) {
-        return "Usb not enabled";
+        strncpy(msg, "Usb not enabled", n - 1);
+        return false;
     }
 
     enTime = 0;
     hasEnabled = false;
-    digitalWrite(pin, LOW);
-    return "";
+    doDisable();
+    return true;
 }
 
 void loop()
 {
     if (hasEnabled && millis() >= (enTime + Z_USB_TTL)) {
-        zusbPin::disable();
+        hasEnabled = false;
+
+        zdebug("zusbPin::disable(): auto");
+
+        doDisable();
     }
 }
 }

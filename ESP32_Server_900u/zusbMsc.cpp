@@ -69,10 +69,11 @@ void setup()
 {
 }
 
-String enable()
+bool enable(char* msg, size_t n)
 {
     if (hasEnabled) {
-        return "Usb already enabled";
+        strncpy(msg, "Usb already enabled", n - 1);
+        return false;
     }
 
     maxSectorIndex = 0;
@@ -83,7 +84,9 @@ String enable()
 
     if (!file) {
         zdebug("zusbMsc::enable(): file not found");
-        return String("File not exists: ") + String(Z_USB_BIN_PATH);
+
+        strncpy(msg, "File not exists: " Z_USB_BIN_PATH, n - 1);
+        return false;
     }
 
     int size = file.size();
@@ -92,7 +95,8 @@ String enable()
 
     if (size == 0) {
         file.close();
-        return String("Empty file: ") + String(Z_USB_BIN_PATH);
+        strncpy(msg, "Empty file: " Z_USB_BIN_PATH, n - 1);
+        return false;
     }
 
     maxSectorIndex = ceil((float)size / (float)Z_DISK_SECTOR_SIZE) - 1;
@@ -124,20 +128,21 @@ String enable()
     enTime = millis();
     hasEnabled = true;
 
-    return "";
+    return true;
 }
 
-String disable()
+bool disable(char* msg, size_t n)
 {
     if (!hasEnabled) {
-        return "Usb not enabled";
+        strncpy(msg, "Usb not enabled", n - 1);
+        return false;
     }
 
     requestDisable = true;
 
     zdebug("zusbMsc::disable()");
 
-    return "";
+    return true;
 }
 
 void loop()

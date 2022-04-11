@@ -3,6 +3,6 @@
 namespace zusbMsc {
 void setup();
 void loop();
-String enable();
-String disable();
+bool enable(char* msg, size_t n);
+bool disable(char* msg, size_t n);
 }

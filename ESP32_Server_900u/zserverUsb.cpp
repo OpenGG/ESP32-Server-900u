@@ -6,10 +6,11 @@
 static void handleUsbOn(AsyncWebServerRequest* request)
 {
     zdebug("/admin/usb/on");
-    String msg = zusb::enable();
+    char msg[128] = { 0 };
+    bool success = zusb::enable(msg, 128);
     zdebug("/admin/usb/on: ", msg);
 
-    if (msg.length() != 0) {
+    if (!success) {
         request->send(Z_STATUS_SERVER_ERROR, Z_MIME_PLAIN_TEXT, msg);
         return;
     }
@@ -20,10 +21,11 @@ static void handleUsbOn(AsyncWebServerRequest* request)
 static void handleUsbOff(AsyncWebServerRequest* request)
 {
     zdebug("/admin/usb/off");
-    String msg = zusb::disable();
+    char msg[128] = { 0 };
+    bool success = zusb::disable(msg, 128);
     zdebug("/admin/usb/off: ", msg);
 
-    if (msg.length() != 0) {
+    if (!success) {
         request->send(Z_STATUS_SERVER_ERROR, Z_MIME_PLAIN_TEXT, msg);
         return;
     }

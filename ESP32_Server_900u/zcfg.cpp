@@ -244,8 +244,9 @@ void begin()
     parse();
 }
 
-String get(const char* key,
-    const String& defaultValue)
+char const* get(
+    char const* key,
+    char const* defaultValue)
 {
     int count = result[0];
     int cursor = 1;
@@ -266,20 +267,22 @@ String get(const char* key,
         if (isMatch) {
             if (valueLen == 0) {
                 zdebug("zcfg ", key, ": empty value");
-                return "";
+                return result + cursor;
             }
 
             if (valueLen < 0 || cursor + valueLen >= Z_CONFIG_RESULT_MAX) {
                 break;
             }
 
-            char v[valueLen];
+            // char v[valueLen];
 
-            memcpy(v, result + cursor, valueLen);
+            // memcpy(v, result + cursor, valueLen);
 
-            zdebug("zcfg ", key, ": ", v);
+            zdebug("zcfg ", key, ": ", result + cursor);
 
-            return String(v);
+            return result + cursor;
+
+            // return String(v);
         }
 
         cursor += valueLen;
@@ -288,6 +291,51 @@ String get(const char* key,
     zdebug("zcfg ", key, ": ", defaultValue, " (default)");
 
     return defaultValue;
+}
+
+int getInt(char const* key, int defaultValue)
+{
+    char const* value = zcfg::get(key, "");
+
+    if (strlen(value) == 0) {
+        return defaultValue;
+    }
+
+    char* endptr = NULL;
+
+    int number = defaultValue;
+    number = strtol(value, &endptr, 10);
+
+    /* test return to number and errno values */
+    if (value == endptr) {
+        zdebug("Number invalid, no digits found, 0 returned: ", number);
+
+        return defaultValue;
+    } else if (errno == ERANGE && number == LONG_MIN) {
+        zdebug("Number invalid, underflow occurred: ", number);
+
+        return defaultValue;
+    } else if (errno == ERANGE && number == LONG_MAX) {
+        zdebug("Number invalid, overflow occurred: ", number);
+
+        return defaultValue;
+    } else if (errno == EINVAL) {
+        /* not in all c99 implementations - gcc OK */
+        zdebug("Number invalid, base contains unsupported value: ", number);
+
+        return defaultValue;
+    } else if (errno == 0 && value && !*endptr) {
+
+        zdebug("Number valid, and represents all characters read: ", number);
+
+        return number;
+    } else if (errno == 0 && value && *endptr != 0) {
+        zdebug("Number valid, but additional characters remain: ", number);
+
+        return number;
+    }
+
+    return number;
 }
 
 void clear()

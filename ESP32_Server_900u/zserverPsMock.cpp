@@ -35,7 +35,7 @@ protected:
     String _paramsBackup;
 
 public:
-    OneParamRewrite(const char* from, const char* to)
+    OneParamRewrite(char const* from, char const* to)
         : AsyncWebRewrite(from, to)
     {
 

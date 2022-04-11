@@ -6,9 +6,9 @@ static IPAddress Server_IP(10, 1, 1, 1);
 static IPAddress Subnet_Mask(255, 255, 255, 0);
 
 static IPAddress start(
-    const String& ssid,
-    const String& pass,
-    const String& ip,
+    char const* ssid,
+    char const* pass,
+    char const* ip,
     int ch)
 {
     Server_IP.fromString(ip);
@@ -20,7 +20,7 @@ static IPAddress start(
     // WiFi.setSleep(false);
 
     // launch the access point
-    WiFi.softAP(ssid.c_str(), pass.c_str(), ch);
+    WiFi.softAP(ssid, pass, ch);
 
     // important delay, if it's not here the library has not time to set the IP as wanted
     // zdebug("Wait 100 ms for AP_START...");
@@ -36,15 +36,15 @@ static IPAddress start(
 }
 
 static IPAddress connect(
-    const String& ssid,
-    const String& pass,
-    const String& hostname)
+    char const* ssid,
+    char const* pass,
+    char const* hostname)
 {
     WiFi.mode(WIFI_STA);
     WiFi.setAutoConnect(true);
     WiFi.setAutoReconnect(true);
-    WiFi.hostname(hostname);
-    WiFi.begin(ssid.c_str(), pass.c_str());
+    WiFi.setHostname(hostname);
+    WiFi.begin(ssid, pass);
     if (WiFi.waitForConnectResult() != WL_CONNECTED) {
         // HWSerial.println("Wifi failed to connect");
     } else {
@@ -59,16 +59,16 @@ static IPAddress connect(
 namespace zwifi {
 IPAddress setup()
 {
-    String wifi_connect = zconfig::get("wifi_connect", "0");
+    int wifi_connect = zconfig::getInt("wifi_connect", 0);
 
-    String wifi_ap_ssid = zconfig::get("wifi_ap_ssid", "ESP_WEB_AP");
-    String wifi_ap_pass = zconfig::get("wifi_ap_pass", "123456789");
-    String wifi_ap_ip = zconfig::get("wifi_ap_ip", "10.1.1.1");
-    int wifi_ap_ch = zconfig::get("wifi_ap_ch", "11").toInt();
+    char const* wifi_ap_ssid = zconfig::get("wifi_ap_ssid", "ESP_WEB_AP");
+    char const* wifi_ap_pass = zconfig::get("wifi_ap_pass", "123456789");
+    char const* wifi_ap_ip = zconfig::get("wifi_ap_ip", "10.1.1.1");
+    int wifi_ap_ch = zconfig::getInt("wifi_ap_ch", 11);
 
-    String wifi_ssid = zconfig::get("wifi_ssid", "Home_WIFI");
-    String wifi_pass = zconfig::get("wifi_pass", "password");
-    String wifi_hostname = zconfig::get("wifi_hostname", "esp.local");
+    char const* wifi_ssid = zconfig::get("wifi_ssid", "Home_WIFI");
+    char const* wifi_pass = zconfig::get("wifi_pass", "password");
+    char const* wifi_hostname = zconfig::get("wifi_hostname", "esp.local");
 
     zdebug("wifi_connect: ", wifi_connect);
     zdebug("wifi_ap_ssid: ", wifi_ap_ssid);
@@ -76,7 +76,7 @@ IPAddress setup()
     zdebug("wifi_ap_ip: ", wifi_ap_ip);
     zdebug("wifi_ap_ch: ", wifi_ap_ch);
 
-    bool apMode = wifi_connect.equals("0");
+    bool apMode = wifi_connect == 0;
 
     if (apMode) {
         return start(wifi_ap_ssid, wifi_ap_pass, wifi_ap_ip, wifi_ap_ch);

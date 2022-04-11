@@ -8,10 +8,10 @@ static void handleListFiles(AsyncWebServerRequest* request)
     File dir = zfs.open("/");
     String out = "";
     for (File file = dir.openNextFile(); file; file = dir.openNextFile()) {
-        String fname = String(file.name());
-
-        out += fname + "\t" + file.size() + "\n";
-
+        out += file.name();
+        out += "\t";
+        out += file.size();
+        out += "\n";
         file.close();
     }
     dir.close();
