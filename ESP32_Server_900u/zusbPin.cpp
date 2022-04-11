@@ -3,6 +3,7 @@
 #ifndef Z_USB_MSC
 
 #include "zconfig.h"
+#include "zdebug.h"
 
 static int pin = 4;
 

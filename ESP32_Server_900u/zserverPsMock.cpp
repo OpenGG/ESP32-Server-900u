@@ -74,14 +74,18 @@ static void handleConsoleUpdate(AsyncWebServerRequest* request)
 
     if (request->hasParam("p")) {
         AsyncWebParameter* p = request->getParam("p");
-        String name = p->name();
+        // String name = p->name();
+        String value = p->value();
 
-        rgn = split(name, "list/", "/");
-        zdebug("/update/ps4/", rgn);
+        rgn = split(value, "list/", "/");
+
+        zdebug("/update/ps4/", p->name(), value, rgn);
     }
 
-    int params = request->params();
-    String xmlStr = "<?xml version=\"1.0\" ?><update_data_list><region id=\"" + rgn + "\"><force_update><system level0_system_ex_version=\"0\" level0_system_version=\"" + Version + "\" level1_system_ex_version=\"0\" level1_system_version=\"" + Version + "\"/></force_update><system_pup ex_version=\"0\" label=\"" + lblVersion + "\" sdk_version=\"" + sVersion + "\" version=\"" + Version + "\"><update_data update_type=\"full\"><image size=\"" + imgSize + "\">" + imgPath + "</image></update_data></system_pup><recovery_pup type=\"default\"><system_pup ex_version=\"0\" label=\"" + lblVersion + "\" sdk_version=\"" + sVersion + "\" version=\"" + Version + "\"/><image size=\"" + imgSize + "\">" + imgPath + "</image></recovery_pup></region></update_data_list>";
+    // int params = request->params();
+    String xmlStr = "<?xml version=\"1.0\" ?><update_data_list><region id=\"";
+    xmlStr += rgn;
+    xmlStr += "\"><force_update><system level0_system_ex_version=\"0\" level0_system_version=\"" Version "\" level1_system_ex_version=\"0\" level1_system_version=\"" Version "\"/></force_update><system_pup ex_version=\"0\" label=\"" lblVersion "\" sdk_version=\"" sVersion "\" version=\"" Version "\"><update_data update_type=\"full\"><image size=\"" imgSize "\">" imgPath "</image></update_data></system_pup><recovery_pup type=\"default\"><system_pup ex_version=\"0\" label=\"" lblVersion "\" sdk_version=\"" sVersion "\" version=\"" Version "\"/><image size=\"" imgSize "\">" imgPath "</image></recovery_pup></region></update_data_list>";
 
     request->send(Z_STATUS_OK, Z_MIME_XML, xmlStr);
 }
