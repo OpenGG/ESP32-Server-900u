@@ -11,9 +11,10 @@ int sleepTime = 0;
 void setup()
 {
     zdebugBegin(115200);
-    zdebug("setup()");
 
     zdebugDelay(3000);
+
+    zdebug("setup()");
 
     zfs.begin(true);
     zconfig::setup();

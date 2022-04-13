@@ -5,7 +5,7 @@
 #define Z_CONFIG_BUFF_SIZE 128
 #define Z_CONFIG_FILE_PATH "/config.txt"
 
-static char buff[Z_CONFIG_BUFF_SIZE] = { 0 };
+static char buff[Z_CONFIG_BUFF_SIZE];
 static char result[Z_CONFIG_RESULT_MAX] = { 0 };
 
 static void trim(int& start, int& end)
@@ -54,10 +54,15 @@ static void emit(int& cursor, int& count, int keyStart, int keyEnd, int valueSta
     //     zdebug(buff[i]);
     // }
 
-    int keyLen = keyEnd - keyStart + 1;
-    int valueLen = valueEnd - valueStart + 1;
+    int keyLen = keyEnd - keyStart;
+    int valueLen = valueEnd - valueStart;
 
-    if (cursor + 1 + keyLen + 1 + valueLen >= Z_CONFIG_RESULT_MAX) {
+    if (
+        cursor + 1 + // keyLen
+            keyLen + 1 + // key
+            1 + // valueLen
+            valueLen + 1 // value
+        >= Z_CONFIG_RESULT_MAX) {
         return;
     }
 
@@ -67,25 +72,33 @@ static void emit(int& cursor, int& count, int keyStart, int keyEnd, int valueSta
 
     int c = cursor;
     // key size
-    result[c] = keyLen;
+    result[c] = keyLen + 1;
     c += 1;
 
     // key
-    if (keyLen > 1) {
-        memcpy(result + c, buff + keyStart, keyLen - 1);
+    if (keyLen > 0) {
+        memcpy(result + c, buff + keyStart, keyLen);
     }
     c += keyLen;
 
+    // string end
+    result[c] = 0;
+    c += 1;
+
     // value size
-    result[c] = valueLen;
+    result[c] = valueLen + 1;
     c += 1;
 
     // value
-    if (valueLen > 1) {
-        memcpy(result + c, buff + valueStart, valueLen - 1);
+    if (valueLen > 0) {
+        memcpy(result + c, buff + valueStart, valueLen);
     }
 
     c += valueLen;
+
+    // string end
+    result[c] = 0;
+    c += 1;
 
     cursor = c;
     count += 1;
@@ -233,7 +246,12 @@ static void parse()
     }
 
     // zdebug("result");
-    // zdebug(result);
+    // String out = "";
+    // for(int a =0;a<400;++a) {
+    //     out += (int)result[a];
+    //     out += " ";
+    // }
+    // zdebug(out);
 
     file.close();
 }

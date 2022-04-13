@@ -25,7 +25,7 @@ void setup()
 bool enable(char* msg, size_t n)
 {
     if (hasEnabled) {
-        strncpy(msg, "Usb already enabled", n - 1);
+        zmsg(msg, "Usb already enabled", n);
         return false;
     }
 
@@ -39,7 +39,7 @@ bool enable(char* msg, size_t n)
 bool disable(char* msg, size_t n)
 {
     if (!hasEnabled) {
-        strncpy(msg, "Usb not enabled", n - 1);
+        zmsg(msg, "Usb not enabled", n);
         return false;
     }
 

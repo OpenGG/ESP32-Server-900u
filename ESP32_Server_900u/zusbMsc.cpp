@@ -7,6 +7,7 @@
 #include "zconfig.h"
 #include "zdebug.h"
 #include "zfs.h"
+#include "zmsg.h"
 #include <math.h>
 
 #define Z_DISK_SECTOR_COUNT 8192
@@ -21,7 +22,7 @@ static File file;
 
 static uint32_t maxSectorIndex = 0;
 
-static uint8_t readBuff[Z_DISK_SECTOR_SIZE] = { 0 };
+static uint8_t readBuff[Z_DISK_SECTOR_SIZE];
 
 static void closeFile()
 {
@@ -72,7 +73,7 @@ void setup()
 bool enable(char* msg, size_t n)
 {
     if (hasEnabled) {
-        strncpy(msg, "Usb already enabled", n - 1);
+        zmsg(msg, "Usb already enabled", n);
         return false;
     }
 
@@ -85,7 +86,7 @@ bool enable(char* msg, size_t n)
     if (!file) {
         zdebug("zusbMsc::enable(): file not found");
 
-        strncpy(msg, "File not exists: " Z_USB_BIN_PATH, n - 1);
+        zmsg(msg, "File not exists: " Z_USB_BIN_PATH, n);
         return false;
     }
 
@@ -95,7 +96,7 @@ bool enable(char* msg, size_t n)
 
     if (size == 0) {
         file.close();
-        strncpy(msg, "Empty file: " Z_USB_BIN_PATH, n - 1);
+        zmsg(msg, "Empty file: " Z_USB_BIN_PATH, n);
         return false;
     }
 
@@ -134,7 +135,7 @@ bool enable(char* msg, size_t n)
 bool disable(char* msg, size_t n)
 {
     if (!hasEnabled) {
-        strncpy(msg, "Usb not enabled", n - 1);
+        zmsg(msg, "Usb not enabled", n);
         return false;
     }
 
