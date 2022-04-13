@@ -7,11 +7,18 @@ void setup()
     zcfg::begin();
 }
 
-String get(
-    const char* key,
-    const String& defaultValue)
+char const* get(
+    char const* key,
+    char const* defaultValue)
 {
     return zcfg::get(key, defaultValue);
+}
+
+int getInt(
+    char const* key,
+    int defaultValue)
+{
+    return zcfg::getInt(key, defaultValue);
 }
 
 void clear()

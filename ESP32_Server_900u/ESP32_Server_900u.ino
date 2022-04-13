@@ -11,9 +11,10 @@ int sleepTime = 0;
 void setup()
 {
     zdebugBegin(115200);
-    zdebug("setup()");
 
     zdebugDelay(3000);
+
+    zdebug("setup()");
 
     zfs.begin(true);
     zconfig::setup();
@@ -24,7 +25,7 @@ void setup()
 
     zdns::setup(ip);
 
-    int deviceSleep = zconfig::get("device_sleep", "30").toInt();
+    int deviceSleep = zconfig::getInt("device_sleep", 30);
 
     zdebug("deviceSleep: ", deviceSleep);
 

@@ -4,9 +4,13 @@
 namespace zconfig {
 void setup();
 
-String get(
-    const char* key,
-    const String& defaultValue);
+char const* get(
+    char const* key,
+    char const* defaultValue);
+
+int getInt(
+    char const* key,
+    int defaultValue);
 
 void clear();
 }
