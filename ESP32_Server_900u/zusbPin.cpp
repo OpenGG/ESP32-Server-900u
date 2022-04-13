@@ -4,6 +4,7 @@
 
 #include "zconfig.h"
 #include "zdebug.h"
+#include "zmsg.h"
 
 static int pin = 4;
 

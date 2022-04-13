@@ -315,7 +315,7 @@ int getInt(char const* key, int defaultValue)
 {
     char const* value = zcfg::get(key, "");
 
-    if (strlen(value) == 0) {
+    if (value[0] == 0) {
         return defaultValue;
     }
 
