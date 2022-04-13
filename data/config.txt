@@ -4,7 +4,7 @@ wifi_connect=0
 # wifi ap configs
 wifi_ap_ssid=ESP_WEB_AP
 wifi_ap_pass=123456789
-wifi_ap_ip=10.1.1
+wifi_ap_ip=10.1.1.1
 wifi_ap_ch=11
 
 # wifi station configs
