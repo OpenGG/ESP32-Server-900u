@@ -77,7 +77,7 @@ const zMenuInit = () => {
   });
 
   const autoExec = () => {
-    const params = new URLSearchParams(window.location.search)
+    const params = new URLSearchParams(window.location.hash.slice(1))
 
     const value = params.get('a')
 
