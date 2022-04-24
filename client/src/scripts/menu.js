@@ -18,6 +18,10 @@ const zMenuInit = () => {
   };
 
   const execButton = async (btn) => {
+    if (payloadLock) {
+      return;
+    }
+
     const name = btn.textContent.trim();
     //   const desc = btn.getAttribute('data-desc');
     const custom = btn.getAttribute("data-custom");
@@ -87,12 +91,14 @@ const zMenuInit = () => {
       return
     }
 
-    execButton(autoBtn)
+    setTimeout(() => {
+      execButton(autoBtn);
+    }, 500);
   }
 
   zMenu.addEventListener("click", onClickButton, false);
   zMenu.addEventListener("mouseover", onHoverButton, false);
   zMenu.addEventListener("mouseout", onLeaveButton, false);
 
-  setTimeout(autoExec, 500);
+  autoExec();
 };
