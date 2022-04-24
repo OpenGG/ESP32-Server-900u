@@ -2,7 +2,7 @@
 
 // eslint-disable-next-line no-unused-vars
 const zMenuInit = () => {
-  const zProxy = (className, fn) => (e) => {
+  const delegate = (className, fn) => (e) => {
     const { target } = e;
 
     if (target.classList.contains(className)) {
@@ -10,21 +10,21 @@ const zMenuInit = () => {
     }
   };
 
-  let zPayloadLock = false;
+  let payloadLock = false;
 
-  const zPlStatusPrio = {
+  const plStatusPrio = {
     className: "pending",
     textContent: "Please select button",
   };
 
-  const zOnClickButton = zProxy("btn-payload", async (btn) => {
+  const execButton = async (btn) => {
     const name = btn.textContent.trim();
     //   const desc = btn.getAttribute('data-desc');
     const custom = btn.getAttribute("data-custom");
     const bin = btn.getAttribute("data-bin");
     const msg = btn.getAttribute("data-msg");
 
-    zPayloadLock = true;
+    payloadLock = true;
 
     zPlStatus.className = "running";
 
@@ -37,6 +37,7 @@ const zMenuInit = () => {
       }
 
       if (custom) {
+        // eslint-disable-next-line no-eval
         (0, eval)(`${custom}()`);
       }
 
@@ -47,14 +48,16 @@ const zMenuInit = () => {
       zPlStatus.textContent = `Error running ${name}: ${e.message}`;
     }
 
-    zPlStatusPrio.className = zPlStatus.className;
-    zPlStatusPrio.textContent = zPlStatus.textContent;
+    plStatusPrio.className = zPlStatus.className;
+    plStatusPrio.textContent = zPlStatus.textContent;
 
-    zPayloadLock = false;
-  });
+    payloadLock = false;
+  };
 
-  const zOnHoverButton = zProxy("btn-payload", (btn) => {
-    if (zPayloadLock) {
+  const onClickButton = delegate("btn-payload", execButton);
+
+  const onHoverButton = delegate("btn-payload", (btn) => {
+    if (payloadLock) {
       return;
     }
 
@@ -64,16 +67,32 @@ const zMenuInit = () => {
     zPlStatus.textContent = desc;
   });
 
-  const zOnLeaveButton = zProxy("btn-payload", () => {
-    if (zPayloadLock) {
+  const onLeaveButton = delegate("btn-payload", () => {
+    if (payloadLock) {
       return;
     }
 
-    zPlStatus.className = zPlStatusPrio.className;
-    zPlStatus.textContent = zPlStatusPrio.textContent;
+    zPlStatus.className = plStatusPrio.className;
+    zPlStatus.textContent = plStatusPrio.textContent;
   });
 
-  zMenu.addEventListener("click", zOnClickButton, false);
-  zMenu.addEventListener("mouseover", zOnHoverButton, false);
-  zMenu.addEventListener("mouseout", zOnLeaveButton, false);
+  const autoExec = () => {
+    const params = new URLSearchParams(window.location.search)
+
+    const value = params.get('a')
+
+    const autoBtn = value && document.querySelector(`.btn-${value}`)
+
+    if (!autoBtn) {
+      return
+    }
+
+    execButton(autoBtn)
+  }
+
+  zMenu.addEventListener("click", onClickButton, false);
+  zMenu.addEventListener("mouseover", onHoverButton, false);
+  zMenu.addEventListener("mouseout", onLeaveButton, false);
+
+  setTimeout(autoExec, 500);
 };
