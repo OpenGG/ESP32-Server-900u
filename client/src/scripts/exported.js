@@ -12,8 +12,8 @@ const showMessage = (msg) => {
 const loadPayloadData = (PLfile) =>
   new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
-    xhr.open("GET", PLfile, true);
-    xhr.overrideMimeType("text/plain; charset=x-user-defined");
+    xhr.open('GET', PLfile, true);
+    xhr.overrideMimeType('text/plain; charset=x-user-defined');
     xhr.onreadystatechange = () => {
       if (xhr.readyState !== 4) {
         return;
@@ -32,13 +32,13 @@ const loadPayloadData = (PLfile) =>
 // usb functions - stooged
 const disableUSB = () => {
   const xhr = new XMLHttpRequest();
-  xhr.open("POST", "/admin/usb/off", true);
+  xhr.open('POST', '/admin/usb/off', true);
   xhr.send(null);
 };
 
 const enableUSB = () => {
   const xhr = new XMLHttpRequest();
-  xhr.open("POST", "/admin/usb/on", true);
+  xhr.open('POST', '/admin/usb/on', true);
   xhr.send(null);
 };
 
@@ -60,12 +60,12 @@ const injectPayload = (payloadData) => {
     for (let i = 0; i < bufLen / 4; i++) {
       const hxVal = payloadData
         .slice(i * 4, 4 + i * 4)
-        .split("")
+        .split('')
         .reverse()
-        .join("")
-        .split("")
+        .join('')
+        .split('')
         .map((s) => `0000${s.charCodeAt(0).toString(16)}`.slice(-2))
-        .join("");
+        .join('');
       loader_writer[i] = parseInt(hxVal, 16);
     }
     chain.syscall(74, payload_loader, bufLen, 0x1 | 0x2 | 0x4);
@@ -78,7 +78,7 @@ const injectPayload = (payloadData) => {
       payload_buffer
     );
   } else {
-    alert("No Payload Data!");
+    alert('No Payload Data!');
   }
 };
 
@@ -185,6 +185,6 @@ const injectBinLoader = () => {
 
 const deviceSleep = () => {
   const xhr = new XMLHttpRequest();
-  xhr.open("POST", "/admin/device/powersave", true);
+  xhr.open('POST', '/admin/device/powersave', true);
   xhr.send(null);
 };

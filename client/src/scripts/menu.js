@@ -13,8 +13,8 @@ const zMenuInit = () => {
   let payloadLock = false;
 
   const plStatusPrio = {
-    className: "pending",
-    textContent: "Please select button",
+    className: 'pending',
+    textContent: 'Please select button',
   };
 
   const execButton = async (btn) => {
@@ -24,13 +24,13 @@ const zMenuInit = () => {
 
     const name = btn.textContent.trim();
     //   const desc = btn.getAttribute('data-desc');
-    const custom = btn.getAttribute("data-custom");
-    const bin = btn.getAttribute("data-bin");
-    const msg = btn.getAttribute("data-msg");
+    const custom = btn.getAttribute('data-custom');
+    const bin = btn.getAttribute('data-bin');
+    const msg = btn.getAttribute('data-msg');
 
     payloadLock = true;
 
-    zPlStatus.className = "running";
+    zPlStatus.className = 'running';
 
     zPlStatus.textContent = `${name} loading... please wait`;
 
@@ -45,10 +45,10 @@ const zMenuInit = () => {
         (0, eval)(`${custom}()`);
       }
 
-      zPlStatus.className = "done";
+      zPlStatus.className = 'done';
       zPlStatus.textContent = msg || `${name} loaded`;
     } catch (e) {
-      zPlStatus.className = "fail";
+      zPlStatus.className = 'fail';
       zPlStatus.textContent = `Error running ${name}: ${e.message}`;
     }
 
@@ -58,20 +58,20 @@ const zMenuInit = () => {
     payloadLock = false;
   };
 
-  const onClickButton = delegate("btn-payload", execButton);
+  const onClickButton = delegate('btn-payload', execButton);
 
-  const onHoverButton = delegate("btn-payload", (btn) => {
+  const onHoverButton = delegate('btn-payload', (btn) => {
     if (payloadLock) {
       return;
     }
 
-    const desc = btn.getAttribute("data-desc");
+    const desc = btn.getAttribute('data-desc');
 
-    zPlStatus.className = "";
+    zPlStatus.className = '';
     zPlStatus.textContent = desc;
   });
 
-  const onLeaveButton = delegate("btn-payload", () => {
+  const onLeaveButton = delegate('btn-payload', () => {
     if (payloadLock) {
       return;
     }
@@ -80,25 +80,42 @@ const zMenuInit = () => {
     zPlStatus.textContent = plStatusPrio.textContent;
   });
 
+  const getBtn = (cls) => {
+    if (!cls) {
+      return null;
+    }
+
+    const btns = document.querySelectorAll('.btn-payload');
+
+    for (let i = 0; i < btns.length; i += 1) {
+      const btn = btns[i];
+      if (btn.className.includes(`btn-${cls}`)) {
+        return btn;
+      }
+    }
+
+    return null;
+  };
+
   const autoExec = () => {
-    const params = new URLSearchParams(window.location.hash.slice(1))
+    const params = new URLSearchParams(window.location.hash.slice(1));
 
-    const value = params.get('a')
+    const value = params.get('a');
 
-    const autoBtn = value && document.querySelector(`.btn-${value}`)
+    const autoBtn = value && getBtn(value);
 
     if (!autoBtn) {
-      return
+      return;
     }
 
     setTimeout(() => {
       execButton(autoBtn);
     }, 500);
-  }
+  };
 
-  zMenu.addEventListener("click", onClickButton, false);
-  zMenu.addEventListener("mouseover", onHoverButton, false);
-  zMenu.addEventListener("mouseout", onLeaveButton, false);
+  zMenu.addEventListener('click', onClickButton, false);
+  zMenu.addEventListener('mouseover', onHoverButton, false);
+  zMenu.addEventListener('mouseout', onLeaveButton, false);
 
   autoExec();
 };

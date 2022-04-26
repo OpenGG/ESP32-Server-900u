@@ -12,12 +12,12 @@ const zJailbreakDone = () => {
   const now = Date.now();
   const dur = ((now - zStartTime) / 1000).toFixed(1);
 
-  zJbStatus.classList.remove("running");
-  zJbStatus.classList.add("done");
+  zJbStatus.classList.remove('running');
+  zJbStatus.classList.add('done');
   zJbStatus.textContent = `success in ${dur}s.`;
 
-  zLoading.classList.add("hide");
-  zApp.classList.add("show");
+  zLoading.classList.add('hide');
+  zApp.classList.add('show');
 
   zMenuInit();
 };
@@ -29,7 +29,7 @@ const zMain = () => {
 };
 
 window.addEventListener(
-  "load",
+  'load',
   () => {
     setTimeout(zMain, 1500);
   },

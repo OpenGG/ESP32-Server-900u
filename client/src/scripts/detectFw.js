@@ -6,7 +6,7 @@ const detectFw = () => {
 
   const matches = UA.match(/PlayStation \d\/(\d+\.\d+)/);
 
-  const ver = matches ? matches[1] : "Unknown";
+  const ver = matches ? matches[1] : 'Unknown';
 
   zFwVer.textContent = ver;
 };
