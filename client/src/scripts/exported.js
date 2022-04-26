@@ -185,6 +185,6 @@ const injectBinLoader = () => {
 
 const deviceSleep = () => {
   const xhr = new XMLHttpRequest();
-  xhr.open('POST', '/admin/device/powersave', true);
+  xhr.open('POST', '/admin/device/sleep', true);
   xhr.send(null);
 };
