@@ -219,6 +219,25 @@ static void handleSleep(AsyncWebServerRequest* request)
     request->send(Z_STATUS_OK, Z_MIME_PLAIN_TEXT, "Going to sleep");
 }
 
+static void handleSetSleep(AsyncWebServerRequest* request)
+{
+    int secs = 0;
+
+    AsyncWebParameter* p = request->getParam("secs");
+
+    if (p != NULL) {
+        secs = p->value().toInt();
+    }
+
+    if (secs > 0 && secs < 3600) {
+        zsleep::setSleep(secs);
+        request->send(Z_STATUS_OK, Z_MIME_PLAIN_TEXT, Z_MSG_DONE);
+        return;
+    }
+
+    request->send(Z_STATUS_CLIENT_ERROR, Z_MIME_PLAIN_TEXT, "Invalid input");
+}
+
 namespace zroutes {
 void device()
 {
@@ -230,7 +249,9 @@ void device()
 
     zserverApp.on("/admin/device/info", HTTP_GET, handleInfo);
 
-    zserverApp.on("/admin/device/sleep", HTTP_POST, handleSleep);
+    zserverApp.on("/admin/device/sleep/now", HTTP_POST, handleSleep);
+
+    zserverApp.on("/admin/device/sleep/set", HTTP_POST, handleSleep);
 }
 
 void deviceLoop()

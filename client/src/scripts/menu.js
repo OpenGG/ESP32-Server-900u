@@ -1,7 +1,7 @@
-/* globals loadPayloadData, injectPayload, zPlStatus, zMenu */
+/* globals loadPayloadData, injectPayload, zPlStatus, zMenu, sleep, deviceSetSleep */
 
 // eslint-disable-next-line no-unused-vars
-const zMenuInit = () => {
+const zMenuInit = async () => {
   const delegate = (className, fn) => (e) => {
     const { target } = e;
 
@@ -97,10 +97,14 @@ const zMenuInit = () => {
     return null;
   };
 
-  const autoExec = () => {
+  const getParam = (name) => {
     const params = new URLSearchParams(window.location.hash.slice(1));
 
-    const value = params.get('a');
+    return params.get(name);
+  };
+
+  const autoExec = async () => {
+    const value = getParam('a');
 
     const autoBtn = value && getBtn(value);
 
@@ -108,14 +112,26 @@ const zMenuInit = () => {
       return;
     }
 
-    setTimeout(() => {
-      execButton(autoBtn);
-    }, 500);
+    await sleep(500);
+
+    execButton(autoBtn);
+  };
+
+  const autoSleep = async () => {
+    const value = getParam('s');
+
+    const minutes = (value && parseInt(value, 10)) || 0;
+
+    // >5m && < 10h
+    if (minutes > 5 && minutes < 10 * 60) {
+      await deviceSetSleep(minutes * 60);
+    }
   };
 
   zMenu.addEventListener('click', onClickButton, false);
   zMenu.addEventListener('mouseover', onHoverButton, false);
   zMenu.addEventListener('mouseout', onLeaveButton, false);
 
-  autoExec();
+  await autoExec();
+  await autoSleep();
 };

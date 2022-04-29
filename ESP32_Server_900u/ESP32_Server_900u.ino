@@ -6,8 +6,6 @@
 #include "zsleep.h"
 #include "zwifi.h"
 
-int sleepTime = 0;
-
 void setup()
 {
     zdebugBegin(115200);
@@ -25,13 +23,7 @@ void setup()
 
     zdns::setup(ip);
 
-    int deviceSleep = zconfig::getInt("device_sleep", 30);
-
-    zdebug("deviceSleep: ", deviceSleep);
-
-    if (deviceSleep > 0) {
-        sleepTime = millis() + (deviceSleep * 60 * 1000);
-    }
+    zsleep::setup();
 
     zdebug("setup() end");
 }
@@ -48,10 +40,6 @@ void loop()
     zdns::loop();
 
     // delay(1000);
-
-    if (sleepTime > 0 && millis() > sleepTime) {
-        zsleep::sleep();
-    }
 
     zsleep::loop();
 }

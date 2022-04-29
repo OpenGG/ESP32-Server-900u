@@ -3,7 +3,7 @@ let zStartTime = 0;
 let zJailbreak = false;
 
 // eslint-disable-next-line no-unused-vars
-const zJailbreakDone = () => {
+const zJailbreakDone = async () => {
   if (zJailbreak) {
     return;
   }
@@ -19,7 +19,7 @@ const zJailbreakDone = () => {
   zLoading.classList.add('hide');
   zApp.classList.add('show');
 
-  zMenuInit();
+  await zMenuInit();
 };
 
 const zMain = () => {

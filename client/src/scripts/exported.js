@@ -185,6 +185,13 @@ const injectBinLoader = () => {
 
 const deviceSleep = () => {
   const xhr = new XMLHttpRequest();
-  xhr.open('POST', '/admin/device/sleep', true);
+  xhr.open('POST', '/admin/device/sleep/now', true);
   xhr.send(null);
+};
+
+const deviceSetSleep = (secs) => {
+  const xhr = new XMLHttpRequest();
+  xhr.open('POST', '/admin/device/sleep/set', true);
+  xhr.setRequestHeader('content-type', 'application/x-www-form-urlencoded');
+  xhr.send(`secs=${secs}`);
 };
